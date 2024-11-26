@@ -1,76 +1,242 @@
+/* General Body Styling */
 body, html {
     height: 100%;
     margin: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f8;
-    color: #333; /* Ensuring good readability */
+    background-color: #f4f4f8; /* Light, neutral background */
+    color: #333;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
+/* Sidebar */
 .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    width: 250px; /* Slightly wider for a better visual balance */
-    background-color: #2C3E50; /* Darker for a more modern look */
-    color: #FFF;
+    width: 260px;
+    background-color: #1c1e22;
+    color: #fff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
+}
+
+.sidebar ul li {
+    border-bottom: 1px solid #2a2c30;
 }
 
 .sidebar ul li a {
     display: block;
     padding: 20px;
     text-decoration: none;
-    color: #FFF; /* White text for contrast */
-    border-bottom: 1px solid #34495E; /* Subtle separators */
+    color: #fff;
+    font-size: 18px;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .sidebar ul li a:hover {
-    background-color: #34495E;
+    background-color: #333;
+    color: #1abc9c;
 }
 
+/* Email List */
 .email-list {
-    margin-left: 250px; /* Adjusted to match the new sidebar width */
-    padding: 20px;
+    margin-left: 260px; /* Match sidebar width */
+    padding: 40px;
+    background-color: #f8f9fa;
 }
 
 .email-list ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .email-list ul li {
     background-color: #ffffff;
-    margin-bottom: 10px;
-    padding: 15px;
-    border-radius: 8px; /* Soft rounded corners for a friendly interface */
+    padding: 15px 20px;
+    border-radius: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Soft shadow for depth */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Date alignment */
+.email-date {
+    font-size: 14px;
+    color: #7f8c8d;
+    white-space: nowrap;
+    margin-left: 15px; /* Space between title and date */
 }
 
 .email-list ul li:hover {
-    background-color: #ECF0F1; /* Light hover effect */
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.email-list ul li .email-left {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.email-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-list ul li .email-title:hover {
+    text-decoration: underline;
+}
+
+.email-list ul li .email-date {
+    font-size: 14px;
+    color: #7f8c8d;
+    white-space: nowrap;
+    text-align: right;
+    min-width: 100px;
+}
+
+.email-list ul li .icons {
+    display: none;
+    gap: 15px;
+    font-size: 18px;
+    color: #2c3e50;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.email-list ul li:hover .icons {
+    display: flex; /* Show icons on hover */
 }
 
 .icons {
-    display: flex;
+    display: none;
     gap: 10px;
-    font-size: 16px; /* Ensuring icons are not too large */
+    font-size: 18px;
+    color: #2c3e50;
+    margin-right: 100px;
 }
 
 .icons i {
     cursor: pointer;
-    color: #2C3E50; /* Dark color for icons for consistency */
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .icons i:hover {
-    color: #2980B9; /* Brighter color on hover for interactivity */
+    color: #1abc9c;
+    transform: scale(1.2);
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .email-list {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .email-list ul li .email-date {
+        text-align: left;
+    }
+}
+
+/* Entry Page */
+.entry {
+    margin-left: 260px; /* Match sidebar width */
+    padding: 40px;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.entry-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow for emphasis */
+    width: 100%;
+    max-width: 800px;
+    text-align: left;
+}
+
+.entry-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 10px;
+}
+
+.entry-info {
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-right: 10px;
+}
+
+.download-link {
+    color: #1abc9c;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.download-link:hover {
+    color: #16a085;
+    text-decoration: underline;
+}
+
+.part {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    background-color: #f4f4f8;
+    border-radius: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.part p  {
+    margin: 0;
+}
+.twoRows {
+    grid-column: 2 span;
+}
+
+h3 {
+    margin-bottom: 0px;
+}
+
