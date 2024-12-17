@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="index.html">
+                    <img src="LOGO.png" alt="Your Logo" style="height: 25px;">
+                </a>
+            </div> 
+            <ul class="navbar-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="forms.html">Reports</a></li>
+            </ul>
+            <div class="navbar-login">
+                <a href="login.html" class="login-button">Login</a>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="form_body">
+        <div class="layout">
+            <div class="sidebar">
+                <h2>Reports</h2>
+                <div class="buttons-container">
+                    <a href="Formular_claim.html" class="button" style="background-image: url('image1.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Claim & Damage</a>
+                    <a href="Formular_transport.html" class="button" style="background-image: url('image2.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Transportation</a>
+                    <a href="Formular_priprava.html" class="button" style="background-image: url('image3.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Vehicle preparation</a>
+                    <a href="Formular_komunikacia.html" class="button" style="background-image: url('image4.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Comunication</a>
+                    <a href="Formular_ostatne.html" class="button" style="background-image: url('image5.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Other</a>
+                </div>
+            </div>
+            <div class="content">
+                <div class="description-box">
+                    <h1 id="button-name">Welcome</h1>
+                    <p id="description-text">Hover over the buttons on the left to learn more about each page.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.button');
+        const buttonName = document.getElementById('button-name');
+        const descriptionText = document.getElementById('description-text');
+    
+        buttons.forEach(button => {
+            button.addEventListener('mouseover', () => {
+                const name = button.textContent.trim(); // Get the button's name
+                const description = button.getAttribute('data-description');
+                buttonName.textContent = name; // Update the heading with the button's name
+                descriptionText.textContent = description; // Update the paragraph with the description
+            });
+    
+            button.addEventListener('mouseleave', () => {
+                buttonName.textContent = "Hover over the buttons"; // Reset the heading
+                descriptionText.textContent = "Hover over the buttons on the left to learn more about each page."; // Reset the paragraph
+            });
+        });
+    </script>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Formular Inc. | All Rights Reserved</p>
+            <p>Designed by Your Name</p>
+        </div>
+    </footer>
+</body>

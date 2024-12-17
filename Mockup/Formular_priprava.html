@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="FormsCss.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="navbar-left">
+                <a href="index.html">
+                    <img src="LOGO.png" alt="Your Logo" style="height: 25px;">
+                </a>
+            </div> 
+            <ul class="navbar-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="forms.html">Reports</a></li>
+            </ul>
+            <div class="navbar-login">
+                <a href="login.html" class="login-button">Login</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <h1>Preparation</h1>
+        <form>
+            <!-- Udaje o strane nahlasujuceho -->
+            <h2>Udaje o strane nahlasujuceho</h2>
+            <div>
+                <label for="nazov_spolocnosti">Názov Spolčnosti:</label>
+                <input type="text" id="nazov_spolocnosti" name="nazov_spolocnosti" required>
+            </div>
+            <div>
+                <label for="priezvisko">Priezvisko:</label>
+                <input type="text" id="priezvisko" name="priezvisko" required>
+            </div>
+            <div>
+                <label for="krstne_meno">Krstne meno:</label>
+                <input type="text" id="krstne_meno" name="krstne_meno" required>
+            </div>
+            <div>
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="datum_vykladky">Datum:</label>
+                <input type="date" id="datum_vykladky" name="datum_vykladky" required>
+            </div>
+
+            <!-- Podrobnosti o poskodenom vozidle -->
+            <h2>Podrobnosti</h2>
+            <div>
+                <label for="vin_vozidla">VIN vozidla:</label>
+                <input type="text" id="vin_vozidla" name="vin_vozidla" required>
+            </div>
+            <div>
+                <label for="model_vozidla">Model vozidla:</label>
+                <input type="text" id="model_vozidla" name="model_vozidla" required>
+            </div>
+
+
+            <!-- Poznamky-->
+            <h2>Popis problemu</h2>
+            <div class="button-wrapper">
+                <textarea id="message" name="message" placeholder="Write your message here..."></textarea>
+            </div>
+            
+            <!-- Subory-->
+            <h2>Fotky</h2>
+            <div>
+                <label for="file_1">Fotky:</label>
+                <input type="file" id="file_1" name="file_1">
+            </div>
+
+            
+
+            <!-- Other dropdowns and sections -->
+            <div class="button-wrapper">
+                <button type="submit">Odoslať</button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Formular Inc. | All Rights Reserved</p>
+            <p>Designed by Your Name</p>
+        </div>
+    </footer>
+    <script>
+        // Define the common options
+        const optionsPovaha = [
+            { value: "0", text: "" },
+            { value: "1", text: "BR Spalene" },
+            { value: "2", text: "CA Zlomene" },
+            { value: "3", text: "CD Prerezane" }
+        ];
+
+        const optionsMiesto = [
+            { value: "0", text: "" },
+            { value: "1", text: "01 Spojler predny" },
+            { value: "2", text: "02 Naraznik predny" },
+            { value: "3", text: "03 Kapota" }
+        ];
+
+        function populateDropdownPovaha(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            optionsPovaha.forEach(option => {
+                const optElement = document.createElement('option');
+                optElement.value = option.value;
+                optElement.textContent = option.text;
+                dropdown.appendChild(optElement);
+            });
+        }
+
+        function populateDropdownMiesto(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            optionsMiesto.forEach(option => {
+                const optElement = document.createElement('option');
+                optElement.value = option.value;
+                optElement.textContent = option.text;
+                dropdown.appendChild(optElement);
+            });
+        }
+
+
+
+        // Populate all dropdowns
+        const dropdownIdsPovaha = ["povaha_poskodenia_1", "povaha_poskodenia_2", "povaha_poskodenia_3", "povaha_poskodenia_4"];
+        dropdownIdsPovaha.forEach(populateDropdownPovaha);
+
+        const dropdownIdsMiesto = ["miesto_poskodenia_1", "miesto_poskodenia_2", "miesto_poskodenia_3", "miesto_poskodenia_4"];
+        dropdownIdsMiesto.forEach(populateDropdownMiesto);
+    </script>
+    
+</body>
+</html>
