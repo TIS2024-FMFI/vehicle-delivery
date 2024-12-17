@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Form Claim{% endblock %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'FormsCss.css' %}">
+{% block content %}
+    <main>
+        <h1>Claim & Damage</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_div }}
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+{% endblock %}

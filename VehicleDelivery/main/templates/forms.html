@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Forms{% endblock %}
+
+{% block content %}
+<div class="form_body">
+    <div class="layout">
+        <div class="sidebar">
+            <h2>Reports</h2>
+            <div class="buttons-container">
+                <a href="{% url 'form_claim' %}" class="button" style="background-image: url('image1.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Claim & Damage</a>
+                <a href="Formular_transport.html" class="button" style="background-image: url('image2.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Transportation</a>
+                <a href="Formular_priprava.html" class="button" style="background-image: url('image3.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Vehicle preparation</a>
+                <a href="Formular_komunikacia.html" class="button" style="background-image: url('image4.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Comunication</a>
+                <a href="Formular_ostatne.html" class="button" style="background-image: url('image5.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Other</a>
+            </div>
+        </div>
+        <div class="content">
+            <div class="description-box">
+                <h1 id="button-name">Welcome</h1>
+                <p id="description-text">Hover over the buttons on the left to learn more about each page.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const buttons = document.querySelectorAll('.button');
+    const buttonName = document.getElementById('button-name');
+    const descriptionText = document.getElementById('description-text');
+
+    buttons.forEach(button => {
+        button.addEventListener('mouseover', () => {
+            const name = button.textContent.trim(); // Get the button's name
+            const description = button.getAttribute('data-description');
+            buttonName.textContent = name; // Update the heading with the button's name
+            descriptionText.textContent = description; // Update the paragraph with the description
+        });
+
+        button.addEventListener('mouseleave', () => {
+            buttonName.textContent = "Hover over the buttons"; // Reset the heading
+            descriptionText.textContent = "Hover over the buttons on the left to learn more about each page."; // Reset the paragraph
+        });
+    });
+</script>
+{% endblock %}
