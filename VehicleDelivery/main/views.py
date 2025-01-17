@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from .forms import *
@@ -31,26 +31,31 @@ def get_name(request):
 def form_all(request):
     return render(request, "forms.html")
 
+
+
+
+
 def form_claim(request):
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse("Claim submitted successfully.")
+            return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
 
     return render(request, "form_claim.html", {'form': form})
 
-
 def form_communication(request):
     if request.method == 'POST':
-        form = CommunicationModel(request.POST, request.FILES)
+        form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse("Claim submitted successfully.")
+            return HttpResponseRedirect('/thanks/')
+        else:
+            print(form.errors)
     else:
-        form = ClaimForm()
+        form = CommunicationForm()
 
     return render(request, "form_communication.html", {'form': form})
 
@@ -59,7 +64,7 @@ def form_other(request):
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse("Claim submitted successfully.")
+            return HttpResponseRedirect('/thanks/')
     else:
         form = OtherForm()
 
@@ -70,7 +75,7 @@ def form_transport(request):
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse("Claim submitted successfully.")
+            return HttpResponseRedirect('/thanks/')
     else:
         form = TransportForm()
 
@@ -81,11 +86,13 @@ def form_preparation(request):
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return HttpResponse("Claim submitted successfully.")
+            return HttpResponseRedirect('/thanks/')
     else:
         form = PreparationForm()
 
     return render(request, "form_preparation.html", {'form': form})
+
+
 
 
 def thanks(request):
