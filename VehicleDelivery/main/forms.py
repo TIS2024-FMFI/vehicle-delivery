@@ -1,5 +1,7 @@
 from django import forms
 from .models import *
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, Div, Submit
 import datetime
 
 class NameForm(forms.Form):
@@ -17,43 +19,27 @@ class NameForm(forms.Form):
         return self.name
 
 #We are going to use this one
-class ClaimForm2(forms.ModelForm):
+class ClaimForm(forms.ModelForm):
     class Meta:
         model = ClaimModel
         fields = "__all__"
-        labels = {
-            "date" : "Datum vykladky"
-        }
 
+class TransportForm(forms.ModelForm):
+    class Meta:
+        model = TransportModel
+        fields = "__all__"
 
-class ClaimForm(forms.Form):
-    #Udaje o strane nahlasujuceho
-    firm_name = forms.CharField(label="Firm name", max_length=30)
-    second_name = forms.CharField(label="Second name", max_length=30)
-    first_name = forms.CharField(label="First name", max_length=30)
-    email = forms.EmailField(label='Your email')
+class PreparationForm(forms.ModelForm):
+    class Meta:
+        model = PreparationModel
+        fields = "__all__"
 
-    #Udaje o preprave
-    record_number = forms.CharField(label="Record number", max_length=30)
-    registration_number = forms.CharField(label="Registration number", max_length=30)
-    date = forms.DateField(initial=datetime.date.today)
-    country_of_arrival = forms.CharField(label="Country of Arrival", max_length=30)
-    place_of_arrival = forms.CharField(label="Place of Arrival", max_length=30)
-    city_of_arrival = forms.CharField(label="City of Arrival", max_length=30)
+class CommunicationForm(forms.ModelForm):
+    class Meta:
+        model = CommunicationModel
+        fields = "__all__"
 
-
-    #Podrobnosti o poskodenom vozidle
-    VIN_number = forms.CharField(label="VIN", max_length=30)
-
-    #Poznamka
-    message = forms.CharField(label="Note", max_length=100)
-
-    #Subory
-    waybill = forms.FileField(label="Waybill")
-    damage_report = forms.FileField(label="Damage Report")
-    photo_car = forms.FileField(label="Photo of whole car")
-    photo_VIN = forms.FileField(label="Photo of VIN")
-    photo_area = forms.FileField(label="Photo of damaged area")
-
-    def __str__(self):
-        return str(self.firm_name) + ";" + str(self.first_name) + " " + str(self.second_name) + ";" + str(self.email)
+class OtherForm(forms.ModelForm):
+    class Meta:
+        model = OtherModel
+        fields = "__all__"
