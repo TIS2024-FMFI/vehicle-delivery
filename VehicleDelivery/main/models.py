@@ -94,6 +94,7 @@ class CommunicationModel(models.Model):
     second_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
     email = models.EmailField()
+    date = models.DateField(null=True, blank=True, default=datetime.date.today)
 
     #Poznamka
     message = models.TextField()

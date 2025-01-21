@@ -93,6 +93,17 @@ def form_preparation(request):
     return render(request, "form_preparation.html", {'form': form})
 
 
+#(shows ClaimModel entries)----------------------------------------------------------------------
+def agent_dashboard(request):
+    entries = ClaimModel.objects.all()
+    return render(request, "agent_dashboard.html", {'entries': entries})
+
+#(shows ClaimModel details)-----------------------------------------------------------------------
+def entry_detail(request, id):
+    entry = ClaimModel.objects.get(id=id)
+    return render(request, "entry_detail.html", {"entry" : entry})
+
+
 
 
 def thanks(request):
