@@ -191,33 +191,36 @@
             accent-color: #333;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggles = document.querySelectorAll('.filter-item .toggle');
+    <!--
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggles = document.querySelectorAll('.filter-item .toggle');
 
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const input = toggle.parentElement.nextElementSibling;
-                    const isVisible = input.style.display === 'block';
-                    input.style.display = isVisible ? 'none' : 'block';
-                    toggle.textContent = isVisible ? '+' : '-';
+                toggles.forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const input = toggle.parentElement.nextElementSibling;
+                        const isVisible = input.style.display === 'block';
+                        input.style.display = isVisible ? 'none' : 'block';
+                        toggle.textContent = isVisible ? '+' : '-';
+                    });
+                });
+
+                const checkboxes = document.querySelectorAll('.checkbox');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        const row = checkbox.closest('tr');
+                        if (checkbox.checked) {
+                            row.classList.add('highlight');
+                        } else {
+                            row.classList.remove('highlight');
+                        }
+                    });
                 });
             });
+        </script>
+    -->
 
-            const checkboxes = document.querySelectorAll('.checkbox');
-
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const row = checkbox.closest('tr');
-                    if (checkbox.checked) {
-                        row.classList.add('highlight');
-                    } else {
-                        row.classList.remove('highlight');
-                    }
-                });
-            });
-        });
-    </script>
 </head>
 <body>
     <header>
@@ -230,38 +233,38 @@
         <div class="sidebar">
             <h3>Filters</h3>
             <div class="filter-item">
-                <label for="date-from">Date from <span class="toggle">+</span></label>
-                <input type="date" id="date-from">
+                <label for="date-from">Date from</label>
+                <input type="date" id="date-from" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="date-to">Date to <span class="toggle">+</span></label>
-                <input type="date" id="date-to">
+                <label for="date-to">Date to</label>
+                <input type="date" id="date-to" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="id">ID <span class="toggle">+</span></label>
-                <input type="text" id="id">
+                <label for="id">ID</label>
+                <input type="text" id="id" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="vin">VIN <span class="toggle">+</span></label>
-                <input type="text" id="vin">
+                <label for="vin">VIN</label>
+                <input type="text" id="vin" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="type">Type <span class="toggle">+</span></label>
-                <input type="text" id="type">
+                <label for="type">Type</label>
+                <input type="text" id="type" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="name">Name <span class="toggle">+</span></label>
-                <input type="text" id="name">
+                <label for="name">Name</label>
+                <input type="text" id="name" style="display: block;">
             </div>
 
             <div class="filter-item">
-                <label for="email">Email <span class="toggle">+</span></label>
-                <input type="email" id="email">
+                <label for="email">Email</label>
+                <input type="email" id="email" style="display: block;">
             </div>
         </div>
 
