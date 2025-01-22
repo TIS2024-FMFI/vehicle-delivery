@@ -119,3 +119,12 @@ STATUS_CHOICES = [
         ('opened', 'Opened'),
         ('archive', 'Archive'),
     ]
+
+
+REPORT_TYPES = [
+    ('CL', "Claim & Damage"),
+    ('CM', "Communication"),
+    ('TR', "Transport"),
+    ('VP', "Vehicle Preparation"),
+    ('OT', "Other")
+]

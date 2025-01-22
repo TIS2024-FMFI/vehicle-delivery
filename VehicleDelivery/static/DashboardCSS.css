@@ -81,6 +81,31 @@ header .logout:hover {
     font-size: 14px;
 }
 
+
+.filter-item select {
+    width: 90%;
+    padding: 8px; /* Matches the padding of other input fields */
+    border: 1px solid #ccc; /* Same border style as the other inputs */
+    border-radius: 4px; /* Matches the border radius */
+    background-color: white;
+    font-size: 14px; /* Consistent font size */
+    color: #333;
+    appearance: none; /* Removes default styling for a custom look */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%23333" d="M2 0L0 2h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center; /* Align arrow */
+    background-size: 12px 12px;
+    cursor: pointer;
+    box-sizing: border-box; /* Ensures proper padding and alignment */
+}
+
+
+.filter-item select option {
+    padding: 8px; /* Adds spacing inside dropdown options */
+    color: #333;
+}
+
+
 .filter-button {
     background-color: #3498db;
     color: white;

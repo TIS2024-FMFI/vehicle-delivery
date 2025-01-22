@@ -93,11 +93,6 @@ class TransportModel(models.Model):
     #Subory
     photo = models.FileField()
 
-    STATUS_CHOICES = [
-        ('new', 'New'),
-        ('opened', 'Opened'),
-        ('archive', 'Archive'),
-    ]
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
 

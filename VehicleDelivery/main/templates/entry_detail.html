@@ -108,7 +108,7 @@
 
     <div class="details-container">
         <div class="details-header">
-            <h1>Entry Details</h1>
+            <h1>Report Details</h1>
             <a href="{% url 'agent_dashboard' %}" class="back-button">Back to Dashboard</a>
         </div>
 
@@ -142,16 +142,6 @@
                 <label for="entry-status">Status:</label>
                 <span id="entry-status">{{ entry.status }}</span>
             </div>
-
-            <div class="notes-section">
-                <label for="notes">Notes:</label>
-                <textarea id="notes">{{ entry.notes }}</textarea>
-            </div>
-        </div>
-
-        <div class="details-actions">
-            <button class="save-button">Save Changes</button>
-        </div>
     </div>
 </body>
 </html>

@@ -18,31 +18,58 @@
         <div class="sidebar">
             <form method="get" class="filter-form">
                 <h3>Filters</h3>
+
+                <!-- Date From -->
                 <div class="filter-item">
                     <label for="date_from">Date From</label>
                     <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
                 </div>
+
+                <!-- Date To -->
                 <div class="filter-item">
                     <label for="date_to">Date To</label>
                     <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
                 </div>
+
+                <!-- ID -->
                 <div class="filter-item">
-                    <label for="identifier">ID</label>
+                    <label for="id">ID</label>
                     <input type="text" id="id" name="id" value="{{ filters.id }}">
                 </div>
+
+                <!-- VIN -->
                 <div class="filter-item">
-                    <label for="identifier">VIN</label>
+                    <label for="vin">VIN</label>
                     <input type="text" id="vin" name="vin" value="{{ filters.vin }}">
                 </div>
+
+                <!-- Name -->
                 <div class="filter-item">
                     <label for="name">Name</label>
-                    <input type="text" id="first_name" name="first_name" value="{{ filters.first_name }}">
+                    <input type="text" id="name" name="name" value="{{ filters.first_name }}">
                 </div>
+
+                <!-- Email -->
                 <div class="filter-item">
-                    <label for="name">Email</label>
+                    <label for="email">Email</label>
                     <input type="text" id="email" name="email" value="{{ filters.email }}">
                 </div>
+
+                <!-- Dropdown for Type -->
+                <div class="filter-item">
+                    <label for="type">Type</label>
+                    <select id="typeReport" name="type">
+                        <!--<option value="" disabled {% if not filters.type %}selected{% endif %}>Select Type</option>-->
+                        {% for code, label in report_types %}
+                            <option value="{{ code }}" {% if filters.type == code %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
                 <button type="submit" class="filter-button">Filter</button>
+
+                <!-- Clear Filters -->
                 <a href="{% url 'agent_dashboard' %}" class="clear-button">Clear Filters</a>
             </form>
         </div>
@@ -104,6 +131,7 @@
                             url: '{% url "update_status" %}', // Update with the correct URL
                             type: 'POST',
                             data: {
+                                'type' :  document.getElementById("typeReport").value,
                                 'new_status': selectedStatus,
                                 'selected_entries': JSON.stringify(selectedEntries), // Serialize the array as JSON
                                 'csrfmiddlewaretoken': '{{ csrf_token }}' // Include CSRF token

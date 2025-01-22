@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from .forms import *
 from .models import *
+from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES
 
 def home(request):
     return render(request, "home.html")
@@ -94,13 +95,46 @@ def agent_dashboard(request):
     input_vin = request.GET.get('vin', '')
     input_name = request.GET.get('first_name', '')
     input_email = request.GET.get('email', '')
+    input_type = request.GET.get('type', 'CL')
 
-    entries = ClaimModel.objects.all()
+    filters = {
+        'status': request.GET.get('status', 'new'),
+        'date_from': request.GET.get('date_from', ''),
+        'date_to': request.GET.get('date_to', ''),
+        'id': request.GET.get('id', ''),
+        'vin': request.GET.get('vin', ''),
+        'first_name': request.GET.get('first_name', ''),
+        'email': request.GET.get('email', ''),
+        'type': request.GET.get('type', 'CL'),
+    }
+
+    context = {
+        'report_types': REPORT_TYPES,
+        'filters' : filters
+    }
+    entries = None
+    match input_type:
+        case 'CL':
+            entries = ClaimModel.objects.all()
+        case 'CM':
+            entries = CommunicationModel.objects.all()
+        case 'TR':
+            entries = TransportModel.objects.all()
+        case 'VP':
+            entries = PreparationModel.objects.all()
+        case 'OT':
+            entries = OtherModel.objects.all()
 
     if input_id:
         entries = entries.filter(id__icontains=input_id)
-    if input_vin:
-        entries = entries.filter(VIN_number__icontains=input_vin)
+
+    try:
+        if input_vin:
+            entries = entries.filter(VIN_number__icontains=input_vin)
+    except:
+        pass
+
+
     if input_date_from:
         entries = entries.filter(date__gte=input_date_from)
     if input_date_to:
@@ -113,11 +147,9 @@ def agent_dashboard(request):
         entries = entries.filter(status=input_status)
 
 
+    context['entries'] = entries
 
-
-
-
-    return render(request, "agent_dashboard.html", {'entries': entries})
+    return render(request, "agent_dashboard.html", context)
 
 def update_status(request):
     if request.method == "POST":
@@ -133,7 +165,18 @@ def update_status(request):
 
         # Perform the status update
         if selected_entries and new_status:
-            ClaimModel.objects.filter(id__in=selected_entries).update(status=new_status)
+            match request.POST.get('type'):
+                case 'CL':
+                    ClaimModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                case 'CM':
+                    CommunicationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                case 'TR':
+                    TransportModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                case 'VP':
+                    PreparationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                case 'OT':
+                    OtherModel.objects.filter(id__in=selected_entries).update(status=new_status)
+
             return JsonResponse({'status': 'success', 'message': 'Status updated successfully'})
 
         return JsonResponse({'status': 'error', 'message': 'No entries or status provided'}, status=400)
