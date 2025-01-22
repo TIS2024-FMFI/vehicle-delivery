@@ -75,6 +75,7 @@ header {
     background-color: #e74c3c; /* Red background for contrast */
     color: white;
     padding: 10px 20px;
+    margin: 0px;
     border-radius: 15px; /* Rounded corners */
     font-size: 14px;
     font-weight: bold;
@@ -97,6 +98,15 @@ h1 {
     color: #4f555c;
     text-align: center;
     margin-bottom: 30px;
+}
+
+.logout-form {
+    box-sizing: initial;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
 }
 
 

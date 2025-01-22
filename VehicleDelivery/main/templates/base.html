@@ -23,7 +23,14 @@
                 <li><a href="{% url 'form_all' %}">Reports</a></li>
             </ul>
             <div class="navbar-login">
-                <a href="{% url 'agent_dashboard'%}" class="login-button">Login</a>
+                {% if user.is_authenticated %}
+                <form class="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="login-button" type="submit">Logout</button>
+                  </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="login-button">Login</a>
+                {% endif %}
             </div>
         </nav>
     </header>
