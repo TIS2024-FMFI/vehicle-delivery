@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 class Department(models.Model):
     # code = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=100)
-
+    email = models.EmailField(default=None, null=True) 
 
     def __str__(self):
         return self.name

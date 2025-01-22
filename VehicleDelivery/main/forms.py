@@ -25,6 +25,14 @@ class ClaimForm2(forms.ModelForm):
             "date" : "Datum vykladky"
         }
 
+class DepartmentForm(forms.ModelForm):
+    class Meta:
+        model = Department
+        fields = "__all__"
+        labels = {
+            "name" : "Name of department"
+        }
+
 
 class ClaimForm(forms.Form):
     #Udaje o strane nahlasujuceho

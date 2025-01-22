@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from .forms import *
@@ -10,6 +10,34 @@ def hello_world(request):
 
 def home(request):
     return render(request, "home.html")
+
+def form_department(request, id):
+    department_instance = Department.objects.get(id=id)
+    if request.method == 'POST':
+        if request.POST.get('delete'):
+            department_instance.delete()
+            return redirect('/departments/')
+        form = DepartmentForm(request.POST, instance=department_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('/departments/')
+    else:
+        form = DepartmentForm(instance=department_instance)
+
+    return render(request, "departments/department_form.html", {'form': form})
+
+def departments(request):
+    departments = Department.objects.all()
+    if request.method == 'POST':
+        if request.POST.get('add'):
+            department = Department()
+            department.save()
+        elif request.POST.get('department'):
+            department = Department.objects.get(id=request.POST.get('department'))
+
+        return redirect(f'/form_department/{department.id}/')
+
+    return render(request, "departments/departments.html", {'departments': departments})
 
 def get_name(request):
     if request.method == 'POST':
