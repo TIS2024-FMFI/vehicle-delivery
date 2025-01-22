@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Form Preparation{% endblock %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'FormsCss.css' %}">
+{% block content %}
+    <main>
+        <h1>Vehicle Preparation</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Details of Reporting Party</h3><h3></h3>
+            <div>
+                <label for="{{ form.firm_name.id_for_label }}">{{ form.firm_name.label }}</label>
+                {{ form.firm_name }}
+            </div>
+            <div>
+                <label for="{{ form.second_name.id_for_label }}">{{ form.second_name.label }}</label>
+                {{ form.second_name }}
+            </div>
+            <div>
+                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                {{ form.first_name }}
+            </div>
+            <div>
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+            <div>
+                <label for="{{ form.date.id_for_label }}">Date</label>
+                {{ form.date }}
+            </div>
+            <div> </div>
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Vehicle Details</h3><h3></h3>
+            <div>
+                <label for="{{ form.VIN_number.id_for_label }}">{{ form.VIN_number.label }}</label>
+                {{ form.VIN_number }}
+            </div>
+            <div>
+                <label for="{{ form.vehicle_model.id_for_label }}">{{ form.vehicle_model.label }}</label>
+                {{ form.vehicle_model }}
+            </div>
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Note</h3><h3></h3>
+            <div style="grid-column: span 2;
+            display: flex;
+            justify-content: center;
+            height: 100px;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            text-align: center;">
+
+                {{ form.message }}
+            </div>
+
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Files</h3><h3></h3>
+            <div>
+                <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}</label>
+                {{ form.photo }}
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+{% endblock %}

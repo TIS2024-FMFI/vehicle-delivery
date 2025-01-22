@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Form Claim{% endblock %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'FormsCss.css' %}">
+{% block content %}
+    <main>
+        <h1>Claim & Damage</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Details of Reporting Party</h3><h3></h3>
+            <div>
+                <label for="{{ form.firm_name.id_for_label }}">{{ form.firm_name.label }}</label>
+                {{ form.firm_name }}
+            </div>
+            <div>
+                <label for="{{ form.second_name.id_for_label }}">{{ form.second_name.label }}</label>
+                {{ form.second_name }}
+            </div>
+            <div>
+                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                {{ form.first_name }}
+            </div>
+            <div>
+                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                {{ form.email }}
+            </div>
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Transport Details</h3><h3></h3>
+            <div>
+                <label for="{{ form.record_number.id_for_label }}">{{ form.record_number.label }}</label>
+                {{ form.record_number }}
+            </div>
+            <div>
+                <label for="{{ form.registration_number.id_for_label }}">{{ form.registration_number.label }}</label>
+                {{ form.registration_number }}
+            </div>
+            <div>
+                <label for="{{ form.date.id_for_label }}">Date of arrival</label>
+                {{ form.date }}
+            </div>
+            <div>
+                <label for="{{ form.country_of_arrival.id_for_label }}">{{ form.country_of_arrival.label }}</label>
+                {{ form.country_of_arrival }}
+            </div>
+            <div>
+                <label for="{{ form.place_of_arrival.id_for_label }}">{{ form.place_of_arrival.label }}</label>
+                {{ form.place_of_arrival }}
+            </div>
+            <div>
+                <label for="{{ form.city_of_arrival.id_for_label }}">{{ form.city_of_arrival.label }}</label>
+                {{ form.city_of_arrival }}
+            </div>
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Vehicle Damage Details</h3><h3></h3>
+            <div>
+                <label for="{{ form.VIN_number.id_for_label }}">{{ form.VIN_number.label }}</label>
+                {{ form.VIN_number }}
+            </div>
+            <div></div>
+            <div>
+                <label for="{{ form.nature_of_damage_1.id_for_label }}">{{ form.nature_of_damage_1.label }}</label>
+                {{ form.nature_of_damage_1 }}
+            </div>
+            <div>
+                <label for="{{ form.place_of_damage_1.id_for_label }}">{{ form.place_of_damage_1.label }}</label>
+                {{ form.place_of_damage_1 }}
+            </div>
+            <div>
+                <label for="{{ form.nature_of_damage_2.id_for_label }}">{{ form.nature_of_damage_2.label }}</label>
+                {{ form.nature_of_damage_2 }}
+            </div>
+            <div>
+                <label for="{{ form.place_of_damage_2.id_for_label }}">{{ form.place_of_damage_2.label }}</label>
+                {{ form.place_of_damage_2 }}
+            </div>
+            <div>
+                <label for="{{ form.nature_of_damage_3.id_for_label }}">{{ form.nature_of_damage_3.label }}</label>
+                {{ form.nature_of_damage_3 }}
+            </div>
+            <div>
+                <label for="{{ form.place_of_damage_3.id_for_label }}">{{ form.place_of_damage_3.label }}</label>
+                {{ form.place_of_damage_3 }}
+            </div>
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Note</h3><h3></h3>
+            <div style="grid-column: span 2;
+            display: flex;
+            justify-content: center;
+            height: 100px;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            text-align: center;">
+
+                {{ form.message }}
+            </div>
+
+
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Files</h3><h3></h3>
+            <div>
+                <label for="{{ form.waybill.id_for_label }}">{{ form.waybill.label }}</label>
+                {{ form.waybill }}
+            </div>
+            <div>
+                <label for="{{ form.damage_report.id_for_label }}">{{ form.damage_report.label }}</label>
+                {{ form.damage_report }}
+            </div>
+            <div>
+                <label for="{{ form.photo_car.id_for_label }}">{{ form.photo_car.label }}</label>
+                {{ form.photo_car }}
+            </div>
+            <div>
+                <label for="{{ form.photo_VIN.id_for_label }}">{{ form.photo_VIN.label }}</label>
+                {{ form.photo_VIN }}
+            </div>
+            <div>
+                <label for="{{ form.photo_area.id_for_label }}">{{ form.photo_area.label }}</label>
+                {{ form.photo_area }}
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+{% endblock %}

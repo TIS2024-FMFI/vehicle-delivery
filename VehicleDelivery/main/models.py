@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 import datetime
+from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE
 
 # Create your models here.
 class Person(models.Model):
@@ -38,10 +39,16 @@ class ClaimModel(models.Model):
 
     #Podrobnosti o poskodenom vozidle
     VIN_number = models.CharField(max_length=30)
+    nature_of_damage_1 = models.CharField(max_length=30, choices=NATURE_OF_DAMAGE, default='XX')
+    place_of_damage_1 = models.CharField(max_length=30, choices=PLACE_OF_DAMAGE, default='00')
+    nature_of_damage_2 = models.CharField(max_length=30, choices=NATURE_OF_DAMAGE, default='XX')
+    place_of_damage_2 = models.CharField(max_length=30, choices=PLACE_OF_DAMAGE, default='00')
+    nature_of_damage_3 = models.CharField(max_length=30, choices=NATURE_OF_DAMAGE, default='XX')
+    place_of_damage_3 = models.CharField(max_length=30, choices=PLACE_OF_DAMAGE, default='00')
 
 
     #Poznamka
-    message = models.CharField(max_length=100)
+    message = models.TextField()
 
     #Subory
     waybill = models.FileField()
@@ -49,4 +56,69 @@ class ClaimModel(models.Model):
     photo_car = models.FileField()
     photo_VIN = models.FileField()
     photo_area = models.FileField()
+
+class OtherModel(models.Model):
+    firm_name = models.CharField(max_length=30)
+    second_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    date = models.DateField(null=True, blank=True, default=datetime.date.today)
+
+    #Poznamka
+    message = models.TextField()
+
+    #Subory
+    photo = models.FileField()
+
+class TransportModel(models.Model):
+    firm_name = models.CharField(max_length=30)
+    second_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    date = models.DateField(null=True, blank=True, default=datetime.date.today)
+
+    #Podrobnosti o vozidle
+    VIN_number = models.CharField(max_length=30)
+    vehicle_model = models.CharField(max_length=30)
+    registration_number = models.CharField(max_length=30)
+
+
+    #Poznamka
+    message = models.TextField()
+
+    #Subory
+    photo = models.FileField()
+
+class CommunicationModel(models.Model):
+    firm_name = models.CharField(max_length=30)
+    second_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    date = models.DateField(null=True, blank=True, default=datetime.date.today)
+
+    #Poznamka
+    message = models.TextField()
+
+    #Subory
+    photo = models.FileField()
+
+class PreparationModel(models.Model):
+    firm_name = models.CharField(max_length=30)
+    second_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    date = models.DateField(null=True, blank=True, default=datetime.date.today)
+
+    #Podrobnosti o vozidle
+    VIN_number = models.CharField(max_length=30)
+    vehicle_model = models.CharField(max_length=30)
+
+    #Poznamka
+    message = models.TextField()
+
+    #Subory
+    photo = models.FileField()
+
+
+
 

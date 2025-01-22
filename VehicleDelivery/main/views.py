@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from .forms import *
@@ -31,64 +31,80 @@ def get_name(request):
 def form_all(request):
     return render(request, "forms.html")
 
-def form_claim_2(request):
-    if request.method == 'POST':
-        form = ClaimForm2(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Claim submitted successfully.")
-    else:
-        form = ClaimForm2()
 
-    return render(request, "test_form_claim.html", {'form': form})
 
-"""
+
+
 def form_claim(request):
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
-            new_claim = ClaimModel(
-                #Udaje o strane nahlasujuceho----------------------------------------
-                firm_name=form.cleaned_data['firm_name'],
-                second_name=form.cleaned_data['second_name'],
-                first_name=form.cleaned_data['first_name'],
-                email=form.cleaned_data['email'],
-                #udaje o preprave----------------------------------------------------
-                record_number=form.cleaned_data['record_number'],
-                registration_number=form.cleaned_data['registration_number'],
-                date=form.cleaned_data['date'],
-                country_of_arrival=form.cleaned_data['country_of_arrival'],
-                place_of_arrival=form.cleaned_data['place_of_arrival'],
-                city_of_arrival=form.cleaned_data['city_of_arrival'],
-                #Podrobnosti o poskodeni---------------------------------------------
-                VIN_number=form.cleaned_data['VIN_number'],
-                #Poznamka------------------------------------------------------------
-                message=form.cleaned_data['message'],
-                #Subory--------------------------------------------------------------
-                waybill=request.FILES['waybill'],
-                damage_report=request.FILES['damage_report'],
-                photo_car=request.FILES['photo_car'],
-                photo_VIN=request.FILES['photo_VIN'],
-                photo_area=request.FILES['photo_area']
-            )
-            new_claim.save()
-            return HttpResponse("Claim submitted successfully.")
+            form.save()
+            return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
 
-    return render(request, 'test_form_claim.html', {'form': form})
-"""
+    return render(request, "form_claim.html", {'form': form})
+
 def form_communication(request):
-    pass
+    if request.method == 'POST':
+        form = CommunicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+        else:
+            print(form.errors)
+    else:
+        form = CommunicationForm()
+
+    return render(request, "form_communication.html", {'form': form})
 
 def form_other(request):
-    pass
+    if request.method == 'POST':
+        form = OtherForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = OtherForm()
+
+    return render(request, "form_other.html", {'form': form})
 
 def form_transport(request):
-    pass
+    if request.method == 'POST':
+        form = TransportForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = TransportForm()
+
+    return render(request, "form_transport.html", {'form': form})
 
 def form_preparation(request):
-    pass
+    if request.method == 'POST':
+        form = PreparationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = PreparationForm()
+
+    return render(request, "form_preparation.html", {'form': form})
+
+
+#(shows ClaimModel entries)----------------------------------------------------------------------
+def agent_dashboard(request):
+    entries = ClaimModel.objects.all()
+    return render(request, "agent_dashboard.html", {'entries': entries})
+
+#(shows ClaimModel details)-----------------------------------------------------------------------
+def entry_detail(request, id):
+    entry = ClaimModel.objects.get(id=id)
+    return render(request, "entry_detail.html", {"entry" : entry})
+
+
+
 
 def thanks(request):
     return render(request, "thank.html")
