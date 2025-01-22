@@ -23,6 +23,7 @@ class ClaimForm(forms.ModelForm):
     class Meta:
         model = ClaimModel
         fields = "__all__"
+        exclude = ['status']
 
     def __str__(self):
         return self.firm_name
@@ -34,6 +35,8 @@ class TransportForm(forms.ModelForm):
     class Meta:
         model = TransportModel
         fields = "__all__"
+        exclude = ['status']
+
     def __str__(self):
         return self.firm_name
     def __repr__(self):
@@ -43,6 +46,8 @@ class PreparationForm(forms.ModelForm):
     class Meta:
         model = PreparationModel
         fields = "__all__"
+        exclude = ['status']
+
     def __str__(self):
         return self.firm_name
     def __repr__(self):
@@ -52,6 +57,8 @@ class CommunicationForm(forms.ModelForm):
     class Meta:
         model = CommunicationModel
         fields = "__all__"
+        exclude = ['status']
+
     def __str__(self):
         return self.firm_name
     def __repr__(self):
@@ -61,6 +68,8 @@ class OtherForm(forms.ModelForm):
     class Meta:
         model = OtherModel
         fields = "__all__"
+        exclude = ['status']
+
     def __str__(self):
         return self.firm_name
 

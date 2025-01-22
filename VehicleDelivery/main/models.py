@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 import datetime
-from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE
+from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES
 
 # Create your models here.
 class Person(models.Model):
@@ -57,6 +57,8 @@ class ClaimModel(models.Model):
     photo_VIN = models.FileField()
     photo_area = models.FileField()
 
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+
 class OtherModel(models.Model):
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
@@ -69,6 +71,8 @@ class OtherModel(models.Model):
 
     #Subory
     photo = models.FileField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
 
 class TransportModel(models.Model):
     firm_name = models.CharField(max_length=30)
@@ -89,6 +93,14 @@ class TransportModel(models.Model):
     #Subory
     photo = models.FileField()
 
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('opened', 'Opened'),
+        ('archive', 'Archive'),
+    ]
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+
 class CommunicationModel(models.Model):
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
@@ -101,6 +113,8 @@ class CommunicationModel(models.Model):
 
     #Subory
     photo = models.FileField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
 
 class PreparationModel(models.Model):
     firm_name = models.CharField(max_length=30)
@@ -118,6 +132,8 @@ class PreparationModel(models.Model):
 
     #Subory
     photo = models.FileField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
 
 
 

@@ -113,3 +113,9 @@ PLACE_OF_DAMAGE = [
     ("94", "Left rear wheel: tire"),
     ("95", "Spare tire")
 ]
+
+STATUS_CHOICES = [
+        ('new', 'New'),
+        ('opened', 'Opened'),
+        ('archive', 'Archive'),
+    ]
