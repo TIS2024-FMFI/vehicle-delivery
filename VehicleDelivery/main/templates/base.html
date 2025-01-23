@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load i18n %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,17 +20,21 @@
                 </a>
             </div>
             <ul class="navbar-links">
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'form_all' %}">Reports</a></li>
+                <li><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
+                <li><a href="{% url 'form_all' %}">{% trans "Reports" %}</a></li>
             </ul>
+            <div class="language-switcher">
+                <a href="{% url 'switch_language' 'en' %}" class="btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}" style="color: red;">English</a>
+                <a href="{% url 'switch_language' 'sk' %}" class="btn {% if LANGUAGE_CODE == 'sk' %}active{% endif %}" style="color: red;">Slovak</a>
+            </div>
             <div class="navbar-login">
                 {% if user.is_authenticated %}
                 <form class="logout-form" method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button class="login-button" type="submit">Logout</button>
+                    <button class="login-button" type="submit">{% trans "Logout" %}</button>
                   </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="login-button">Login</a>
+                <a href="{% url 'login' %}" class="login-button">{% trans "Login" %}</a>
                 {% endif %}
             </div>
         </nav>

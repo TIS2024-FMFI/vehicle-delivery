@@ -1,0 +1,279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-23 14:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
+">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
+
+#: .\main\templates\agent_dashboard.html:14 .\main\templates\base.html:30
+msgid "Logout"
+msgstr "Odhásiť sa"
+
+#: .\main\templates\agent_dashboard.html:21
+msgid "Filters"
+msgstr "Filtre"
+
+#: .\main\templates\agent_dashboard.html:25
+msgid "Date from"
+msgstr "Dátum od"
+
+#: .\main\templates\agent_dashboard.html:31
+msgid "Date to"
+msgstr "Dátum do"
+
+#: .\main\templates\agent_dashboard.html:49
+msgid "Name"
+msgstr "Meno"
+
+#: .\main\templates\agent_dashboard.html:61
+msgid "Type"
+msgstr "Typ"
+
+#: .\main\templates\agent_dashboard.html:71
+msgid "Filter"
+msgstr "Filtruj"
+
+#: .\main\templates\agent_dashboard.html:74
+msgid "Clear Filters"
+msgstr "Vymazať filtre"
+
+#: .\main\templates\agent_dashboard.html:81
+#: .\main\templates\agent_dashboard.html:104
+msgid "New"
+msgstr "Nové"
+
+#: .\main\templates\agent_dashboard.html:82
+#: .\main\templates\agent_dashboard.html:105
+msgid "Opened"
+msgstr "Otvorené"
+
+#: .\main\templates\agent_dashboard.html:83
+#: .\main\templates\agent_dashboard.html:106
+msgid "Archived"
+msgstr "Archivované"
+
+#: .\main\templates\agent_dashboard.html:100
+msgid "Move to"
+msgstr "Presunúť do"
+
+#: .\main\templates\agent_dashboard.html:160
+msgid "Firm"
+msgstr "Firma"
+
+#: .\main\templates\agent_dashboard.html:161
+msgid "Full name"
+msgstr "Meno"
+
+#: .\main\templates\agent_dashboard.html:162
+#: .\main\templates\form_communication.html:31
+#: .\main\templates\form_other.html:31
+#: .\main\templates\form_preparation.html:31
+#: .\main\templates\form_transport.html:31
+msgid "Date"
+msgstr "Dátum"
+
+#: .\main\templates\agent_dashboard.html:176
+msgid "No entries found matching the criteria."
+msgstr "Nenašli sa židane výsledky"
+
+#: .\main\templates\base.html:23
+msgid "Home"
+msgstr "Domov"
+
+#: .\main\templates\base.html:24 .\main\templates\forms.html:9
+msgid "Reports"
+msgstr "Reklamácie"
+
+#: .\main\templates\base.html:33
+msgid "Login"
+msgstr "Prihlásiť sa"
+
+#: .\main\templates\form_claim.html:9 .\main\templates\forms.html:11
+msgid "Claim & Damage"
+msgstr "Claim & Damage"
+
+#: .\main\templates\form_claim.html:13
+#: .\main\templates\form_communication.html:13
+#: .\main\templates\form_other.html:13
+#: .\main\templates\form_preparation.html:13
+#: .\main\templates\form_transport.html:13
+msgid "Details of Reporting Party"
+msgstr "Podrobnosti o strane nahlasujúceho"
+
+#: .\main\templates\form_claim.html:15
+#: .\main\templates\form_communication.html:15
+#: .\main\templates\form_other.html:15
+#: .\main\templates\form_preparation.html:15
+#: .\main\templates\form_transport.html:15
+msgid "Firm name"
+msgstr "Názov Firmy"
+
+#: .\main\templates\form_claim.html:19
+#: .\main\templates\form_communication.html:19
+#: .\main\templates\form_other.html:19
+#: .\main\templates\form_preparation.html:19
+#: .\main\templates\form_transport.html:19
+msgid "Second name"
+msgstr "Priezvisko"
+
+#: .\main\templates\form_claim.html:23
+#: .\main\templates\form_communication.html:23
+#: .\main\templates\form_other.html:23
+#: .\main\templates\form_preparation.html:23
+#: .\main\templates\form_transport.html:23
+msgid "First name"
+msgstr "Krstné Meno"
+
+#: .\main\templates\form_claim.html:31 .\main\templates\form_transport.html:36
+msgid "Transport Details"
+msgstr "Detaily Prepravy"
+
+#: .\main\templates\form_claim.html:33
+msgid "Record Number"
+msgstr "Record číslo (neprelozene)"
+
+#: .\main\templates\form_claim.html:37 .\main\templates\form_transport.html:46
+msgid "Registration Number"
+msgstr "Registration číslo (neprelozene)"
+
+#: .\main\templates\form_claim.html:41
+msgid "Date of arrival"
+msgstr "Dátum výkladky"
+
+#: .\main\templates\form_claim.html:45
+msgid "Country of Arrival"
+msgstr "Krajina dodatia"
+
+#: .\main\templates\form_claim.html:49
+msgid "Place of Arrival"
+msgstr "Miesto dodatia"
+
+#: .\main\templates\form_claim.html:53
+msgid "City of Arrival"
+msgstr "Mesto dodatia"
+
+#: .\main\templates\form_claim.html:57
+msgid "Vehicle Damage Details"
+msgstr "Detaili o poškodení vozidla"
+
+#: .\main\templates\form_claim.html:59
+#: .\main\templates\form_preparation.html:38
+#: .\main\templates\form_transport.html:38
+msgid "VIN number"
+msgstr "VIN číslo"
+
+#: .\main\templates\form_claim.html:64 .\main\templates\form_claim.html:72
+#: .\main\templates\form_claim.html:80
+msgid "Nature of Damage"
+msgstr "Povaha poškodenia"
+
+#: .\main\templates\form_claim.html:68 .\main\templates\form_claim.html:76
+#: .\main\templates\form_claim.html:84
+msgid "Place of Damage"
+msgstr "Miesto poškodenia"
+
+#: .\main\templates\form_claim.html:88
+#: .\main\templates\form_communication.html:36
+#: .\main\templates\form_other.html:38
+#: .\main\templates\form_preparation.html:46
+#: .\main\templates\form_transport.html:52
+msgid "Note"
+msgstr "Poznámka"
+
+#: .\main\templates\form_claim.html:102
+#: .\main\templates\form_communication.html:50
+#: .\main\templates\form_preparation.html:60
+#: .\main\templates\form_transport.html:66
+msgid "Files"
+msgstr "Súbory"
+
+#: .\main\templates\form_claim.html:104
+msgid "Waybill"
+msgstr "Nákladný list"
+
+
+#: .\main\templates\form_claim.html:108
+msgid "Damage Report"
+msgstr "Správa o poškodení"
+
+#: .\main\templates\form_claim.html:112
+#, fuzzy
+#| msgid "Phot of Car"
+msgid "Photo of Car"
+msgstr "Fotka Auta"
+
+#: .\main\templates\form_claim.html:116
+msgid "Phot of VIN number"
+msgstr "Fotka VIN čísla"
+
+#: .\main\templates\form_claim.html:120
+msgid "Phot of Damaged Area"
+msgstr "Fotka poškodenej časti"
+
+#: .\main\templates\form_claim.html:124
+#: .\main\templates\form_communication.html:57
+#: .\main\templates\form_other.html:57
+#: .\main\templates\form_preparation.html:66
+#: .\main\templates\form_transport.html:72
+msgid "Submit"
+msgstr "Odovzdať"
+
+#: .\main\templates\form_communication.html:52
+#: .\main\templates\form_other.html:53
+#: .\main\templates\form_preparation.html:62
+#: .\main\templates\form_transport.html:68
+#, fuzzy
+#| msgid "Files"
+msgid "File"
+msgstr "Súbory"
+
+#: .\main\templates\form_preparation.html:36
+#, fuzzy
+#| msgid "Vehicle Damage Details"
+msgid "Vehicle Details"
+msgstr "Detaili o poškodení vozidla"
+
+#: .\main\templates\form_preparation.html:42
+#: .\main\templates\form_transport.html:42
+msgid "Vehicle Model"
+msgstr "Model vozidla"
+
+#: .\main\templates\forms.html:12
+msgid "Transportation"
+msgstr "Preprava"
+
+#: .\main\templates\forms.html:13
+msgid "Vehicle Preperation"
+msgstr "Pripravenie vozidla"
+
+#: .\main\templates\forms.html:14
+msgid "Communication"
+msgstr "Komunikácia"
+
+#: .\main\templates\forms.html:15
+msgid "Other"
+msgstr "Ostatné"
+
+#: .\main\templates\forms.html:20
+msgid "Welcome"
+msgstr "Vitajte"
+
+#: .\main\templates\forms.html:21
+msgid "Hover over the buttons on the left to learn more about each page."
+msgstr ""
+"Ak sa chcete dozvedieť viac o každej stránke, umiestnite kurzor myši na "
+"tlačidlá vľavo."

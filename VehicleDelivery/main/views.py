@@ -8,21 +8,28 @@ import json
 from .forms import *
 from .models import *
 from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES
+from django.utils.translation import activate
 
 def home(request):
+    activate(request.session["language"])
     return render(request, "home.html")
 
 
-
+def switch_language(request, language_code):
+    activate(language_code)
+    request.session["language"] = language_code
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 
 
 
 def form_all(request):
+    activate(request.session["language"])
     return render(request, "forms.html")
 
 def form_claim(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
@@ -35,6 +42,7 @@ def form_claim(request):
     return render(request, "form_claim.html", {'form': form})
 
 def form_communication(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -47,6 +55,7 @@ def form_communication(request):
     return render(request, "form_communication.html", {'form': form})
 
 def form_other(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
@@ -60,6 +69,7 @@ def form_other(request):
     return render(request, "form_other.html", {'form': form})
 
 def form_transport(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -72,6 +82,7 @@ def form_transport(request):
     return render(request, "form_transport.html", {'form': form})
 
 def form_preparation(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -84,10 +95,12 @@ def form_preparation(request):
     return render(request, "form_preparation.html", {'form': form})
 
 def thanks(request):
+    activate(request.session["language"])
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
 def agent_dashboard(request):
+    activate(request.session["language"])
     input_status = request.GET.get('status', 'new')
     input_date_from = request.GET.get('date_from', '')
     input_date_to = request.GET.get('date_to', '')
@@ -107,6 +120,8 @@ def agent_dashboard(request):
         'email': request.GET.get('email', ''),
         'type': request.GET.get('type', 'CL'),
     }
+
+    print(input_type)
 
     context = {
         'report_types': REPORT_TYPES,
@@ -184,8 +199,24 @@ def update_status(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 #(shows ClaimModel details)-----------------------------------------------------------------------
-def entry_detail(request, id):
-    entry = ClaimModel.objects.get(id=id)
+def entry_detail(request, id, _type):
+    activate(request.session["language"])
+
+    entry = None
+
+    match _type:
+        case 'CL':
+            entry = ClaimModel.objects.get(id=id)
+        case 'CM':
+            entry = CommunicationModel.objects.get(id=id)
+        case 'TR':
+            entry = TransportModel.objects.get(id=id)
+        case 'VP':
+            entry = PreparationModel.objects.get(id=id)
+        case 'OT':
+            entry = OtherModel.objects.get(id=id)
+
+
     return render(request, "entry_detail.html", {"entry" : entry})
 
 

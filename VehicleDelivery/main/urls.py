@@ -11,6 +11,7 @@ urlpatterns = [
     path("form_other/", views.form_other, name="form_other"),
     path("forms/", views.form_all, name="form_all"),
     path("agent_dashboard/", views.agent_dashboard, name="agent_dashboard"),
-    path("entry_detail/<int:id>/", views.entry_detail, name="entry_detail"),
+    path("entry_detail/<int:id>/<str:_type>/", views.entry_detail, name="entry_detail"),
     path('update_status/', views.update_status, name='update_status'),
+    path('switch-language/<str:language_code>/', views.switch_language, name='switch_language'),
 ]

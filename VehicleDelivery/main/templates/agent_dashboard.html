@@ -5,29 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'DashboardCSS.css' %}">
+    {% load i18n %}
+    <link rel="stylesheet" href="{% static 'DashboardCSST.css' %}">
 </head>
 <body>
     <header>
         <div class="logo">CEVA Logistics</div>
-        <button class="logout">Log out</button>
+        <button class="logout">{% trans "Logout" %}</button>
     </header>
 
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
             <form method="get" class="filter-form">
-                <h3>Filters</h3>
+                <h3>{% trans "Filters" %}</h3>
 
                 <!-- Date From -->
                 <div class="filter-item">
-                    <label for="date_from">Date From</label>
+                    <label for="date_from">{% trans "Date from" %}</label>
                     <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
                 </div>
 
                 <!-- Date To -->
                 <div class="filter-item">
-                    <label for="date_to">Date To</label>
+                    <label for="date_to">{% trans "Date to" %}</label>
                     <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
                 </div>
 
@@ -45,7 +46,7 @@
 
                 <!-- Name -->
                 <div class="filter-item">
-                    <label for="name">Name</label>
+                    <label for="name">{% trans "Name" %}</label>
                     <input type="text" id="name" name="name" value="{{ filters.first_name }}">
                 </div>
 
@@ -57,9 +58,9 @@
 
                 <!-- Dropdown for Type -->
                 <div class="filter-item">
-                    <label for="type">Type</label>
+                    <label for="type">{% trans "Type" %}</label>
                     <select id="typeReport" name="type">
-                        <!--<option value="" disabled {% if not filters.type %}selected{% endif %}>Select Type</option>-->
+                        <option value="" disabled {% if not filters.type %}selected{% endif %}>Select Type</option>
                         {% for code, label in report_types %}
                             <option value="{{ code }}" {% if filters.type == code %}selected{% endif %}>{{ label }}</option>
                         {% endfor %}
@@ -67,19 +68,19 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="filter-button">Filter</button>
+                <button type="submit" class="filter-button">{% trans "Filter" %}</button>
 
                 <!-- Clear Filters -->
-                <a href="{% url 'agent_dashboard' %}" class="clear-button">Clear Filters</a>
+                <a href="{% url 'agent_dashboard' %}" class="clear-button">{% trans "Clear Filters" %}</a>
             </form>
         </div>
 
         <!-- Content -->
         <div class="content">
             <div class="tabs">
-                <button class="tab-button {% if request.GET.status == 'new' %}active{% endif %}" onclick="filterByStatus('new')">New</button>
-                <button class="tab-button {% if request.GET.status == 'opened' %}active{% endif %}" onclick="filterByStatus('opened')">Opened</button>
-                <button class="tab-button {% if request.GET.status == 'archive' %}active{% endif %}" onclick="filterByStatus('archive')">Archive</button>
+                <button class="tab-button {% if request.GET.status == 'new' %}active{% endif %}" onclick="filterByStatus('new')">{% trans "New" %}</button>
+                <button class="tab-button {% if request.GET.status == 'opened' %}active{% endif %}" onclick="filterByStatus('opened')">{% trans "Opened" %}</button>
+                <button class="tab-button {% if request.GET.status == 'archive' %}active{% endif %}" onclick="filterByStatus('archive')">{% trans "Archived" %}</button>
             </div>
 
             <script>
@@ -96,13 +97,13 @@
             </script>
 
             <div class="table-action">
-                <button type="button" id="moveButton" class="move-button">Move To</button>
+                <button type="button" id="moveButton" class="move-button">{% trans "Move to" %}</button>
                 <div id="statusDropdown" style="display: none;">
                     <select id="new_status">
                         <option value="" disabled selected>Select a status</option>
-                        <option value="new">New</option>
-                        <option value="opened">Opened</option>
-                        <option value="archive">Archived</option>
+                        <option value="new">{% trans "New" %}</option>
+                        <option value="opened">{% trans "Opened" %}</option>
+                        <option value="archive">{% trans "Archived" %}</option>
                     </select>
                 </div>
             </div>
@@ -156,23 +157,23 @@
                         <tr>
                             <th></th>
                             <th>#</th>
-                            <th>Firm</th>
-                            <th>Full name</th>
-                            <th>Date</th>
+                            <th>{% trans "Firm" %}</th>
+                            <th>{% trans "Full name" %}</th>
+                            <th>{% trans "Date" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for entry in entries %}
                             <tr>
                                 <td><input type="checkbox" class="entry-checkbox" value="{{ entry.id }}"></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.id}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.firm_name}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.first_name}} {{entry.second_name}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.date}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type %}">{{entry.id}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.firm_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.first_name}} {{entry.second_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.date}}</a></td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="3">No entries found matching the criteria.</td>
+                                <td colspan="3">{% trans "No entries found matching the criteria." %}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
