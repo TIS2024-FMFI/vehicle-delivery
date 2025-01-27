@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Change password{% endblock %}
+
+{% block content %}
+    <h1>Change password</h1>
+    <p>Changing {{user}}</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+        <button type="submit" name="save" value="save">Save</button>
+    </form>
+{% endblock %}

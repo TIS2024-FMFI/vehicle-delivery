@@ -11,6 +11,14 @@ class Department(models.Model):
     # code = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(default=None, null=True) 
+    TYPE_OF_RECLAMATION = [
+        ('C&D', 'Claim & Damage'),
+        ('TRN', 'Transportation'),
+        ('VPR', 'Vehicke preparation'),
+        ('CMN', 'Comunication'),
+        ('OTH', 'Other'),
+    ]
+    reclamationType = models.CharField(max_length=3, choices=TYPE_OF_RECLAMATION, default='OTH', blank=False)
 
     def __str__(self):
         return self.name
@@ -18,11 +26,11 @@ class Department(models.Model):
 class Person(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     TYPE_OF_USER = [
-        ('ADMIN', 'Admin'),
         ('AGENT', 'Agent'),
+        ('ADMIN', 'Admin'),
     ]
     # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    userType = models.CharField(max_length=5, choices=TYPE_OF_USER, default='AGENT')
+    user_type = models.CharField(max_length=5, choices=TYPE_OF_USER, default='AGENT')
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

@@ -1,20 +1,10 @@
 from django import forms
 from .models import *
+from django.contrib.auth.models import User
 import datetime
+from django.contrib.auth.forms import UserCreationForm
 
-class NameForm(forms.Form):
-    your_name = forms.CharField(label='Your name', max_length=100)
-    email = forms.EmailField(label='Your email')
-    profile_image = forms.ImageField(label='Profile image')
-    CATEGORY_CHOICES = [
-        ('ST', 'Student'),
-        ('TE', 'Teacher'),
-        ('OT', 'Other'),
-    ]
-    category = forms.ChoiceField(choices=CATEGORY_CHOICES, label='Choose category')
 
-    def __str__(self):
-        return self.name
 
 #We are going to use this one
 class ClaimForm2(forms.ModelForm):
@@ -33,6 +23,79 @@ class DepartmentForm(forms.ModelForm):
             "name" : "Name of department"
         }
 
+class UpdatePersonForm(forms.ModelForm):
+    username = forms.CharField(label='Username', widget=forms.TextInput)
+    class Meta:
+        model = Person
+        fields = ['user_type', 'department']
+        # labels = {
+        #     "user_type" : "User type",
+        #     "department" : "Department"
+        # }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if kwargs.get('instance'):
+            self.fields['username'].initial = self.instance.user.username
+
+        
+
+    def save(self, commit=True):
+        # Save the User model first
+        person = super().save(commit=commit)
+
+        if commit:
+            person.user.username = self.cleaned_data['username']
+            person.user.save()
+            
+        return person
+
+class ChanngePersonPasswdForm(forms.Form):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+
+
+
+class PersonForm(UserCreationForm):
+    # Add fields from the Person model
+    user_type = forms.ChoiceField(choices=Person.TYPE_OF_USER, label='User type')
+    department = forms.ModelChoiceField(queryset=Department.objects.all(), label='Department')
+
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2'] #, 'email', 'first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        user_instance = kwargs.get('instance')
+        super().__init__(*args, **kwargs)
+
+        if user_instance:
+            try:
+                person_instance = user_instance.person
+                self.fields['user_type'].initial = person_instance.user_type
+                self.fields['department'].initial = person_instance.department
+            except Person.DoesNotExist:
+                # Handle the case where no Person object exists for the User
+                pass
+
+
+    def save(self, commit=True):
+        # Save the User model first
+        user = super().save(commit=commit)
+
+        # Update the email field of the User model
+        # self.instance.email = user.username
+        # self.instance.save()
+
+        # Then save the Person model
+        if commit:
+            Person.objects.create(
+                user=user,
+                user_type=self.cleaned_data['user_type'],
+                department=self.cleaned_data['department']
+            )
+        return user
 
 class ClaimForm(forms.Form):
     #Udaje o strane nahlasujuceho

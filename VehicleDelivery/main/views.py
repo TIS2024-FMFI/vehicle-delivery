@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from .forms import *
 from .models import *
+from functools import wraps
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 # Create your views here.
 def hello_world(request):
@@ -26,8 +30,59 @@ def form_department(request, id):
 
     return render(request, "departments/department_form.html", {'form': form})
 
+def form_create_person(request):
+    if request.method == 'POST':
+        if request.POST.get('user'):
+            form = PersonForm(instance=User.objects.get(id=request.POST.get('user')))
+            return render(request, "registration/create_user.html", {'form': form})
+        form = PersonForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/users/')
+    else:
+        form = PersonForm()
+    return render(request, "registration/create_user.html", {'form': form})
+
+def form_change_person_passwd(request, id):
+    user = User.objects.get(id=id)
+    message = None
+    if request.method == 'POST':
+        form = ChanngePersonPasswdForm(request.POST)
+        if form.is_valid() and form.cleaned_data['password1'] == form.cleaned_data['password2']:
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            return redirect('/users/')
+        else:
+            message = "Passwords do not match"
+    else:
+        form = ChanngePersonPasswdForm()
+    return render(request, "registration/change_passwd.html", {'form': form,
+                                                               "user": user,
+                                                               "message": message})
+
+def form_update_person(request, id):
+    user = User.objects.get(id=id)
+    if request.method == 'POST':
+        form = UpdatePersonForm(request.POST, instance=user.person)
+        if form.is_valid():
+            form.save()
+            return redirect('/users/')
+    else:
+        form = UpdatePersonForm(instance=user.person)
+    return render(request, "registration/update_person.html", {'form': form,
+                                                               "user": user,})
+
+
+def users(request):
+    if request.method == 'POST':
+        if request.POST.get('passwd'):
+            return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
+        elif request.POST.get('update'):
+            return redirect(f'/update_person/{request.POST.get('update')}/')    
+    people = Person.objects.all().order_by('user__username')
+    return render(request, "registration/users.html", {'users': people})
+
 def departments(request):
-    departments = Department.objects.all()
     if request.method == 'POST':
         if request.POST.get('add'):
             department = Department()
@@ -36,7 +91,8 @@ def departments(request):
             department = Department.objects.get(id=request.POST.get('department'))
 
         return redirect(f'/form_department/{department.id}/')
-
+    
+    departments = Department.objects.all().order_by('name')
     return render(request, "departments/departments.html", {'departments': departments})
 
 def get_name(request):
@@ -59,64 +115,80 @@ def get_name(request):
 def form_all(request):
     return render(request, "forms.html")
 
-def form_claim_2(request):
-    if request.method == 'POST':
-        form = ClaimForm2(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return HttpResponse("Claim submitted successfully.")
-    else:
-        form = ClaimForm2()
 
-    return render(request, "test_form_claim.html", {'form': form})
 
-"""
+
+
 def form_claim(request):
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
-            new_claim = ClaimModel(
-                #Udaje o strane nahlasujuceho----------------------------------------
-                firm_name=form.cleaned_data['firm_name'],
-                second_name=form.cleaned_data['second_name'],
-                first_name=form.cleaned_data['first_name'],
-                email=form.cleaned_data['email'],
-                #udaje o preprave----------------------------------------------------
-                record_number=form.cleaned_data['record_number'],
-                registration_number=form.cleaned_data['registration_number'],
-                date=form.cleaned_data['date'],
-                country_of_arrival=form.cleaned_data['country_of_arrival'],
-                place_of_arrival=form.cleaned_data['place_of_arrival'],
-                city_of_arrival=form.cleaned_data['city_of_arrival'],
-                #Podrobnosti o poskodeni---------------------------------------------
-                VIN_number=form.cleaned_data['VIN_number'],
-                #Poznamka------------------------------------------------------------
-                message=form.cleaned_data['message'],
-                #Subory--------------------------------------------------------------
-                waybill=request.FILES['waybill'],
-                damage_report=request.FILES['damage_report'],
-                photo_car=request.FILES['photo_car'],
-                photo_VIN=request.FILES['photo_VIN'],
-                photo_area=request.FILES['photo_area']
-            )
-            new_claim.save()
-            return HttpResponse("Claim submitted successfully.")
+            form.save()
+            return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
 
-    return render(request, 'test_form_claim.html', {'form': form})
-"""
+    return render(request, "form_claim.html", {'form': form})
+
 def form_communication(request):
-    pass
+    if request.method == 'POST':
+        form = CommunicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+        else:
+            print(form.errors)
+    else:
+        form = CommunicationForm()
+
+    return render(request, "form_communication.html", {'form': form})
 
 def form_other(request):
-    pass
+    if request.method == 'POST':
+        form = OtherForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = OtherForm()
+
+    return render(request, "form_other.html", {'form': form})
 
 def form_transport(request):
-    pass
+    if request.method == 'POST':
+        form = TransportForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = TransportForm()
+
+    return render(request, "form_transport.html", {'form': form})
 
 def form_preparation(request):
-    pass
+    if request.method == 'POST':
+        form = PreparationForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = PreparationForm()
+
+    return render(request, "form_preparation.html", {'form': form})
+
+
+#(shows ClaimModel entries)----------------------------------------------------------------------
+def agent_dashboard(request):
+    entries = ClaimModel.objects.all()
+    return render(request, "agent_dashboard.html", {'entries': entries})
+
+#(shows ClaimModel details)-----------------------------------------------------------------------
+def entry_detail(request, id):
+    entry = ClaimModel.objects.get(id=id)
+    return render(request, "entry_detail.html", {"entry" : entry})
+
+
+
 
 def thanks(request):
     return render(request, "thank.html")
