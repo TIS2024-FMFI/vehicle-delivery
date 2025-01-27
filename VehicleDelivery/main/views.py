@@ -32,9 +32,6 @@ def form_department(request, id):
 
 def form_create_person(request):
     if request.method == 'POST':
-        if request.POST.get('user'):
-            form = PersonForm(instance=User.objects.get(id=request.POST.get('user')))
-            return render(request, "registration/create_user.html", {'form': form})
         form = PersonForm(request.POST)
         if form.is_valid():
             form.save()
@@ -83,8 +80,8 @@ def users(request):
             return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
         elif request.POST.get('update'):
             return redirect(f'/update_person/{request.POST.get('update')}/')    
-    people = Person.objects.all().order_by('user__username')
-    return render(request, "registration/users.html", {'users': people})
+    user = User.objects.all().order_by('username')
+    return render(request, "registration/users.html", {'users': user})
 
 def departments(request):
     if request.method == 'POST':

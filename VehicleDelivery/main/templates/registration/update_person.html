@@ -8,6 +8,6 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" name="save" value="save">Update</button>
-        <button type="submit" name="delete" value="delete">Delete</button>
+        <button class="danger" type="submit" name="delete" value="delete">Delete</button>
     </form>
 {% endblock %}
