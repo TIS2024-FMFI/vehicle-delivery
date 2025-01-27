@@ -63,10 +63,14 @@ def form_change_person_passwd(request, id):
 def form_update_person(request, id):
     user = User.objects.get(id=id)
     if request.method == 'POST':
-        form = UpdatePersonForm(request.POST, instance=user.person)
-        if form.is_valid():
-            form.save()
+        if request.POST.get('delete'):
+            user.delete()
             return redirect('/users/')
+        if request.POST.get('save'):
+            form = UpdatePersonForm(request.POST, instance=user.person)
+            if form.is_valid():
+                form.save()
+                return redirect('/users/')
     else:
         form = UpdatePersonForm(instance=user.person)
     return render(request, "registration/update_person.html", {'form': form,
