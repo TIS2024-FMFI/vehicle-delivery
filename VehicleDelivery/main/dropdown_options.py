@@ -1,15 +1,16 @@
+from django.utils.translation import gettext_lazy as _
 NATURE_OF_DAMAGE = [
-    ("BR", "Burned"),
-    ("CA", "Broken, teared off, cracked"),
-    ("CD", "Cut, torn"),
-    ("CE", "Pierced, cut"),
-    ("EC", "Paint peeled"),
-    ("EN", "Dented"),
-    ("MA", "Missing"),
-    ("PR", "Damaged"),
-    ("RF", " Scratched, scuffed"),
-    ("TA", "Stained"),
-    ("XX", "Not specified")
+    ("BR", _("Burned")),
+    ("CA", _("Broken, teared off, cracked")),
+    ("CD", _("Cut, torn")),
+    ("CE", _("Pierced, cut")),
+    ("EC", _("Paint peeled")),
+    ("EN", _("Dented")),
+    ("MA", _("Missing")),
+    ("PR", _("Damaged")),
+    ("RF", _(" Scratched, scuffed")),
+    ("TA", _("Stained")),
+    ("XX", _("Not specified"))
 ]
 
 

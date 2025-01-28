@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="{% static 'FormsCss.css' %}">
 </head>
 
+<style>
+
+</style>
 
 <body>
     <header>
@@ -24,8 +27,14 @@
                 <li><a href="{% url 'form_all' %}">{% trans "Reports" %}</a></li>
             </ul>
             <div class="language-switcher">
-                <a href="{% url 'switch_language' 'en' %}" class="btn {% if LANGUAGE_CODE == 'en' %}active{% endif %}" style="color: red;">English</a>
-                <a href="{% url 'switch_language' 'sk' %}" class="btn {% if LANGUAGE_CODE == 'sk' %}active{% endif %}" style="color: red;">Slovak</a>
+                <button class="dropdown-btn" onclick="toggleDropdown()">
+                    {% if LANGUAGE_CODE == 'en' %} EN {% elif LANGUAGE_CODE == 'sk' %} SK {% endif %}
+                    ▼
+                </button>
+                <div class="dropdown-menu">
+                    <a href="{% url 'switch_language' 'en' %}" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</a>
+                    <a href="{% url 'switch_language' 'sk' %}" class="{% if LANGUAGE_CODE == 'sk' %}active{% endif %}">SK</a>
+                </div>
             </div>
             <div class="navbar-login">
                 {% if user.is_authenticated %}
@@ -39,7 +48,12 @@
             </div>
         </nav>
     </header>
-
+    <script>
+        function toggleDropdown() {
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
     {% block content %}
     <!-- Content will go here -->
     {% endblock %}

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-23 14:05+0100\n"
+"POT-Creation-Date: 2025-01-28 15:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,52 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n "
 ">= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 
-#: .\main\templates\agent_dashboard.html:14 .\main\templates\base.html:30
+#: .\main\dropdown_options.py:3
+msgid "Burned"
+msgstr "Spálené"
+
+#: .\main\dropdown_options.py:4
+msgid "Broken, teared off, cracked"
+msgstr "Zlomené, odtrhnuté, prasknuté"
+
+#: .\main\dropdown_options.py:5
+msgid "Cut, torn"
+msgstr "Prerezané, roztrhané"
+
+#: .\main\dropdown_options.py:6
+msgid "Pierced, cut"
+msgstr "Prepichnuté, prerezané"
+
+#: .\main\dropdown_options.py:7
+msgid "Paint peeled"
+msgstr "Olúpaná farba"
+
+#: .\main\dropdown_options.py:8
+msgid "Dented"
+msgstr "Preliačené"
+
+#: .\main\dropdown_options.py:9
+msgid "Missing"
+msgstr "Chýba"
+
+#: .\main\dropdown_options.py:10
+msgid "Damaged"
+msgstr "Poškodené"
+
+
+#: .\main\dropdown_options.py:11
+msgid " Scratched, scuffed"
+msgstr "Poškriabané, ošúchané"
+
+#: .\main\dropdown_options.py:12
+msgid "Stained"
+msgstr "Poškvrnené"
+
+#: .\main\dropdown_options.py:13
+msgid "Not specified"
+msgstr "Nešpecifikované"
+
+#: .\main\templates\agent_dashboard.html:14 .\main\templates\base.html:108
 msgid "Logout"
 msgstr "Odhásiť sa"
 
@@ -90,15 +135,15 @@ msgstr "Dátum"
 msgid "No entries found matching the criteria."
 msgstr "Nenašli sa židane výsledky"
 
-#: .\main\templates\base.html:23
+#: .\main\templates\base.html:91
 msgid "Home"
 msgstr "Domov"
 
-#: .\main\templates\base.html:24 .\main\templates\forms.html:9
+#: .\main\templates\base.html:92 .\main\templates\forms.html:9
 msgid "Reports"
 msgstr "Reklamácie"
 
-#: .\main\templates\base.html:33
+#: .\main\templates\base.html:111
 msgid "Login"
 msgstr "Prihlásiť sa"
 
@@ -176,17 +221,17 @@ msgstr "Detaili o poškodení vozidla"
 msgid "VIN number"
 msgstr "VIN číslo"
 
-#: .\main\templates\form_claim.html:64 .\main\templates\form_claim.html:72
-#: .\main\templates\form_claim.html:80
+#: .\main\templates\form_claim.html:66 .\main\templates\form_claim.html:84
+#: .\main\templates\form_claim.html:102
 msgid "Nature of Damage"
 msgstr "Povaha poškodenia"
 
-#: .\main\templates\form_claim.html:68 .\main\templates\form_claim.html:76
-#: .\main\templates\form_claim.html:84
+#: .\main\templates\form_claim.html:78 .\main\templates\form_claim.html:96
+#: .\main\templates\form_claim.html:114
 msgid "Place of Damage"
 msgstr "Miesto poškodenia"
 
-#: .\main\templates\form_claim.html:88
+#: .\main\templates\form_claim.html:118
 #: .\main\templates\form_communication.html:36
 #: .\main\templates\form_other.html:38
 #: .\main\templates\form_preparation.html:46
@@ -194,37 +239,37 @@ msgstr "Miesto poškodenia"
 msgid "Note"
 msgstr "Poznámka"
 
-#: .\main\templates\form_claim.html:102
+#: .\main\templates\form_claim.html:132
 #: .\main\templates\form_communication.html:50
+#: .\main\templates\form_other.html:51
 #: .\main\templates\form_preparation.html:60
 #: .\main\templates\form_transport.html:66
 msgid "Files"
 msgstr "Súbory"
 
-#: .\main\templates\form_claim.html:104
+#: .\main\templates\form_claim.html:134
 msgid "Waybill"
 msgstr "Nákladný list"
 
-
-#: .\main\templates\form_claim.html:108
+#: .\main\templates\form_claim.html:138
 msgid "Damage Report"
 msgstr "Správa o poškodení"
 
-#: .\main\templates\form_claim.html:112
+#: .\main\templates\form_claim.html:142
 #, fuzzy
 #| msgid "Phot of Car"
 msgid "Photo of Car"
 msgstr "Fotka Auta"
 
-#: .\main\templates\form_claim.html:116
+#: .\main\templates\form_claim.html:146
 msgid "Phot of VIN number"
 msgstr "Fotka VIN čísla"
 
-#: .\main\templates\form_claim.html:120
+#: .\main\templates\form_claim.html:150
 msgid "Phot of Damaged Area"
 msgstr "Fotka poškodenej časti"
 
-#: .\main\templates\form_claim.html:124
+#: .\main\templates\form_claim.html:154
 #: .\main\templates\form_communication.html:57
 #: .\main\templates\form_other.html:57
 #: .\main\templates\form_preparation.html:66
@@ -252,17 +297,41 @@ msgstr "Detaili o poškodení vozidla"
 msgid "Vehicle Model"
 msgstr "Model vozidla"
 
+#: .\main\templates\forms.html:11
+msgid "Claim Description"
+msgstr "Claim Popis"
+
+#: .\main\templates\forms.html:12
+#, fuzzy
+#| msgid "Transportation"
+msgid "Transport Description"
+msgstr "Preprava"
+
 #: .\main\templates\forms.html:12
 msgid "Transportation"
 msgstr "Preprava"
+
+#: .\main\templates\forms.html:13
+msgid "Preperation Description"
+msgstr "Príprava Popis"
 
 #: .\main\templates\forms.html:13
 msgid "Vehicle Preperation"
 msgstr "Pripravenie vozidla"
 
 #: .\main\templates\forms.html:14
+#, fuzzy
+#| msgid "Communication"
+msgid "Communication Description"
+msgstr "Komunikácia Popis"
+
+#: .\main\templates\forms.html:14
 msgid "Communication"
 msgstr "Komunikácia"
+
+#: .\main\templates\forms.html:15
+msgid "Other Description"
+msgstr "Ostatné Popis"
 
 #: .\main\templates\forms.html:15
 msgid "Other"

@@ -60,26 +60,56 @@
                 {{ form.VIN_number }}
             </div>
             <div></div>
+        <!-- NATURE OF DAMAGE 1-->
             <div>
-                <label for="{{ form.nature_of_damage_1.id_for_label }}">{% trans "Nature of Damage" %}</label>
-                {{ form.nature_of_damage_1 }}
+                <label for="{{ form.nature_of_damage_1.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_1.name }}" id="{{ form.nature_of_damage_1.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_1.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_1.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 1-->
             <div>
                 <label for="{{ form.place_of_damage_1.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_1 }}
             </div>
+        <!-- NATURE OF DAMAGE 2-->
             <div>
-                <label for="{{ form.nature_of_damage_2.id_for_label }}">{% trans "Nature of Damage" %}</label>
-                {{ form.nature_of_damage_2 }}
+                <label for="{{ form.nature_of_damage_2.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_2.name }}" id="{{ form.nature_of_damage_2.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_2.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_2.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 2-->
             <div>
                 <label for="{{ form.place_of_damage_2.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_2 }}
             </div>
+        <!-- NATURE OF DAMAGE 3-->
             <div>
-                <label for="{{ form.nature_of_damage_3.id_for_label }}">{% trans "Nature of Damage" %}</label>
-                {{ form.nature_of_damage_3 }}
+                <label for="{{ form.nature_of_damage_3.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_3.name }}" id="{{ form.nature_of_damage_3.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_3.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_3.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 3-->
             <div>
                 <label for="{{ form.place_of_damage_3.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_3 }}

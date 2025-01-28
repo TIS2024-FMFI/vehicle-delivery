@@ -67,7 +67,8 @@ header {
 
 /* Login Button Styling */
 .navbar-login {
-    margin-left: auto; /* Push the login button to the far right */
+    /*margin-left: auto; /* Push the login button to the far right */
+    margin-left: 10px;
 }
 
 .login-button {
@@ -85,6 +86,50 @@ header {
 .login-button:hover {
     background-color: #c0392b; /* Darker red on hover */
     transform: scale(1.1); /* Slight enlarge on hover */
+}
+
+
+.language-switcher {
+    margin-left: auto;
+    /*position: relative;*/
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 5px;
+    top: 100%;
+}
+
+.dropdown-menu a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-radius: 5px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #ddd;
+}
+
+.dropdown-btn.active + .dropdown-menu {
+    display: block; /* Make dropdown visible when button is active */
 }
 
 
