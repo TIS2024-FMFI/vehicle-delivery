@@ -21,5 +21,6 @@ urlpatterns = [
     path("form_communication/", views.form_communication, name="form_communication"),
     path("form_other/", views.form_other, name="form_other"),
     path("agent_dashboard", views.agent_dashboard, name="agent_dashboard"),
-    path("entry_detail/<int:id>/", views.entry_detail, name="entry_detail")
+    path("entry_detail/<int:id>/", views.entry_detail, name="entry_detail"),
+    path("no_access/", views.no_access, name="no_access"),
 ]
