@@ -5,7 +5,7 @@ from .forms import *
 from .models import *
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
-from .decorators import admin_required
+from .decorators import admin_required, login_required
 
 
 # Create your views here.
