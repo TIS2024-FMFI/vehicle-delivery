@@ -1,13 +1,15 @@
 from django import forms
 from .models import *
 from django.contrib.auth.models import User
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, Div, Submit
 import datetime
 from django.contrib.auth.forms import UserCreationForm
 
 
 
 #We are going to use this one
-class ClaimForm2(forms.ModelForm):
+class ClaimForm(forms.ModelForm):
     class Meta:
         model = ClaimModel
         fields = "__all__"
@@ -127,4 +129,44 @@ class ClaimForm(forms.Form):
     photo_area = forms.FileField(label="Photo of damaged area")
 
     def __str__(self):
-        return str(self.firm_name) + ";" + str(self.first_name) + " " + str(self.second_name) + ";" + str(self.email)
+        return self.firm_name
+    def __repr__(self):
+        return self.firm_name
+
+
+class TransportForm(forms.ModelForm):
+    class Meta:
+        model = TransportModel
+        fields = "__all__"
+    def __str__(self):
+        return self.firm_name
+    def __repr__(self):
+        return self.firm_name
+
+class PreparationForm(forms.ModelForm):
+    class Meta:
+        model = PreparationModel
+        fields = "__all__"
+    def __str__(self):
+        return self.firm_name
+    def __repr__(self):
+        return self.firm_name
+
+class CommunicationForm(forms.ModelForm):
+    class Meta:
+        model = CommunicationModel
+        fields = "__all__"
+    def __str__(self):
+        return self.firm_name
+    def __repr__(self):
+        return self.firm_name
+
+class OtherForm(forms.ModelForm):
+    class Meta:
+        model = OtherModel
+        fields = "__all__"
+    def __str__(self):
+        return self.firm_name
+
+    def __repr__(self):
+        return self.firm_name

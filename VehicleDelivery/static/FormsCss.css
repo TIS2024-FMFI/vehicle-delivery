@@ -1,6 +1,6 @@
 /* Form Styles */
 form {
-    background: cf0f1;
+    background: #f8f9fa;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -9,6 +9,11 @@ form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+}
+
+fieldset {
+    border: none;
+    column-span: 2;
 }
 
 form h2 {
@@ -35,8 +40,8 @@ form textarea{
     font-size: 16px;
  }
 
-form input, 
-form select, 
+form input,
+form select,
 form button {
     width: 90%;
     padding: 12px;
