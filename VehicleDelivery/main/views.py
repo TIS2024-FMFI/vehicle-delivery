@@ -221,5 +221,7 @@ def entry_detail(request, id, _type):
 
     return render(request, "entry_detail.html", {"entry" : entry})
 
+def statistics(request):
+    return render(request, "statistics.html")
 
 
