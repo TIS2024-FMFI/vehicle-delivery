@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Departments List{% endblock %}
+
+{% block content %}
+    <h1>Departments:</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="add" value="add">Add Department</button>
+        <ul>
+            {% for department in departments %}
+                <li>
+                    <button type="submit" name="department" value={{department.id}}>
+                    {% if department.name %}
+                    {{ department.name }}
+                    {% else %}
+                    No Name
+                    {% endif %}
+                    </button></li>
+            {% endfor %}
+        </ul>
+    </form>
+   
+{% endblock %}

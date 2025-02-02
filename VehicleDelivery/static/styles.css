@@ -416,3 +416,7 @@ footer .footer-content {
 			width: 250px;
 		}
 	}
+
+    .danger {
+        background-color: red;
+    }

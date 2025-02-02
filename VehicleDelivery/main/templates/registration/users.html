@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}User List{% endblock %}
+
+{% block content %}
+    <h1>Users:</h1>
+    <form method="get" action="{% url 'create_person' %}">
+        {% csrf_token %}
+        <button type="submit" name="add" value="add">Add User</button>
+    </form>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <ul>
+            {% for user in users %}
+                <li>
+                    {{ user.username }}
+                    <button type="submit" name="passwd" value={{user.id}}>
+                        Change Password
+                    </button>
+                    <button type="submit" name="update" value={{user.id}}>
+                        Change Person
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    </form>
+   
+{% endblock %}
