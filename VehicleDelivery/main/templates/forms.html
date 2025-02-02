@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% block title %}Forms{% endblock %}
 
 {% block content %}
 <div class="form_body">
     <div class="layout">
         <div class="sidebar">
-            <h2>Reports</h2>
+            <h2>{% trans "Reports" %}</h2>
             <div class="buttons-container">
-                <a href="{% url 'form_claim' %}" class="button" style="background-image: url('image1.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Claim & Damage</a>
-                <a href="{% url 'form_transportation' %}" class="button" style="background-image: url('image2.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Transportation</a>
-                <a href="{% url 'form_preparation' %}" class="button" style="background-image: url('image3.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Vehicle preparation</a>
-                <a href="{% url 'form_communication' %}" class="button" style="background-image: url('image4.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Comunication</a>
-                <a href="{% url 'form_other' %}" class="button" style="background-image: url('image5.jpg');" data-description="Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description. Description.">Other</a>
+                <a href="{% url 'form_claim' %}" class="button" data-description="{% trans 'Claim Description' %}">{% trans "Claim & Damage" %}</a>
+                <a href="{% url 'form_transportation' %}" class="button" data-description="{% trans 'Transport Description' %}">{% trans "Transportation" %}</a>
+                <a href="{% url 'form_preparation' %}" class="button" data-description="{% trans 'Preperation Description' %}">{% trans "Vehicle Preperation" %}</a>
+                <a href="{% url 'form_communication' %}" class="button" data-description="{% trans 'Communication Description' %}">{% trans "Communication" %}</a>
+                <a href="{% url 'form_other' %}" class="button" data-description="{% trans 'Other Description' %}">{% trans "Other" %}</a>
             </div>
         </div>
         <div class="content">
             <div class="description-box">
-                <h1 id="button-name">Welcome</h1>
-                <p id="description-text">Hover over the buttons on the left to learn more about each page.</p>
+                <h1 id="button-name">{% trans "Welcome" %}</h1>
+                <p id="description-text">{% trans "Hover over the buttons on the left to learn more about each page." %}</p>
             </div>
         </div>
     </div>
@@ -34,11 +34,6 @@
             const description = button.getAttribute('data-description');
             buttonName.textContent = name; // Update the heading with the button's name
             descriptionText.textContent = description; // Update the paragraph with the description
-        });
-
-        button.addEventListener('mouseleave', () => {
-            buttonName.textContent = "Hover over the buttons"; // Reset the heading
-            descriptionText.textContent = "Hover over the buttons on the left to learn more about each page."; // Reset the paragraph
         });
     });
 </script>

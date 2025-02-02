@@ -2,89 +2,120 @@
 
 {% block title %}Form Claim{% endblock %}
 {% load static %}
+{% load i18n %}
 <link rel="stylesheet" href="{% static 'FormsCss.css' %}">
 {% block content %}
     <main>
-        <h1>Claim & Damage</h1>
+        <h1>{% trans "Claim & Damage" %}</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Details of Reporting Party</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Details of Reporting Party" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.firm_name.id_for_label }}">{{ form.firm_name.label }}</label>
+                <label for="{{ form.firm_name.id_for_label }}">{% trans "Firm name" %}</label>
                 {{ form.firm_name }}
             </div>
             <div>
-                <label for="{{ form.second_name.id_for_label }}">{{ form.second_name.label }}</label>
+                <label for="{{ form.second_name.id_for_label }}">{% trans "Second name" %}</label>
                 {{ form.second_name }}
             </div>
             <div>
-                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                <label for="{{ form.first_name.id_for_label }}">{% trans "First name" %}</label>
                 {{ form.first_name }}
             </div>
             <div>
-                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                <label for="{{ form.email.id_for_label }}">E-mail</label>
                 {{ form.email }}
             </div>
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Transport Details</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Transport Details" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.record_number.id_for_label }}">{{ form.record_number.label }}</label>
+                <label for="{{ form.record_number.id_for_label }}">{% trans "Record Number" %}</label>
                 {{ form.record_number }}
             </div>
             <div>
-                <label for="{{ form.registration_number.id_for_label }}">{{ form.registration_number.label }}</label>
+                <label for="{{ form.registration_number.id_for_label }}">{% trans "Registration Number" %}</label>
                 {{ form.registration_number }}
             </div>
             <div>
-                <label for="{{ form.date.id_for_label }}">Date of arrival</label>
+                <label for="{{ form.date.id_for_label }}">{% trans "Date of arrival" %}</label>
                 {{ form.date }}
             </div>
             <div>
-                <label for="{{ form.country_of_arrival.id_for_label }}">{{ form.country_of_arrival.label }}</label>
+                <label for="{{ form.country_of_arrival.id_for_label }}">{% trans "Country of Arrival" %}</label>
                 {{ form.country_of_arrival }}
             </div>
             <div>
-                <label for="{{ form.place_of_arrival.id_for_label }}">{{ form.place_of_arrival.label }}</label>
+                <label for="{{ form.place_of_arrival.id_for_label }}">{% trans "Place of Arrival" %}</label>
                 {{ form.place_of_arrival }}
             </div>
             <div>
-                <label for="{{ form.city_of_arrival.id_for_label }}">{{ form.city_of_arrival.label }}</label>
+                <label for="{{ form.city_of_arrival.id_for_label }}">{% trans "City of Arrival" %}</label>
                 {{ form.city_of_arrival }}
             </div>
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Vehicle Damage Details</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Vehicle Damage Details" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.VIN_number.id_for_label }}">{{ form.VIN_number.label }}</label>
+                <label for="{{ form.VIN_number.id_for_label }}">{% trans "VIN number" %}</label>
                 {{ form.VIN_number }}
             </div>
             <div></div>
+        <!-- NATURE OF DAMAGE 1-->
             <div>
-                <label for="{{ form.nature_of_damage_1.id_for_label }}">{{ form.nature_of_damage_1.label }}</label>
-                {{ form.nature_of_damage_1 }}
+                <label for="{{ form.nature_of_damage_1.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_1.name }}" id="{{ form.nature_of_damage_1.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_1.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_1.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 1-->
             <div>
-                <label for="{{ form.place_of_damage_1.id_for_label }}">{{ form.place_of_damage_1.label }}</label>
+                <label for="{{ form.place_of_damage_1.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_1 }}
             </div>
+        <!-- NATURE OF DAMAGE 2-->
             <div>
-                <label for="{{ form.nature_of_damage_2.id_for_label }}">{{ form.nature_of_damage_2.label }}</label>
-                {{ form.nature_of_damage_2 }}
+                <label for="{{ form.nature_of_damage_2.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_2.name }}" id="{{ form.nature_of_damage_2.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_2.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_2.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 2-->
             <div>
-                <label for="{{ form.place_of_damage_2.id_for_label }}">{{ form.place_of_damage_2.label }}</label>
+                <label for="{{ form.place_of_damage_2.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_2 }}
             </div>
+        <!-- NATURE OF DAMAGE 3-->
             <div>
-                <label for="{{ form.nature_of_damage_3.id_for_label }}">{{ form.nature_of_damage_3.label }}</label>
-                {{ form.nature_of_damage_3 }}
+                <label for="{{ form.nature_of_damage_3.id_for_label }}">
+                    {% trans "Nature of Damage" %}
+                </label>
+                <select name="{{ form.nature_of_damage_3.name }}" id="{{ form.nature_of_damage_3.id_for_label }}">
+                    {% for value, display in form.nature_of_damage_3.field.choices %}
+                        <option value="{{ value }}" {% if value == form.nature_of_damage_3.value %}selected{% endif %}>
+                            {{ value }} - {% trans display %}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
+        <!-- PLACE OF DAMAGE 3-->
             <div>
-                <label for="{{ form.place_of_damage_3.id_for_label }}">{{ form.place_of_damage_3.label }}</label>
+                <label for="{{ form.place_of_damage_3.id_for_label }}">{% trans "Place of Damage" %}</label>
                 {{ form.place_of_damage_3 }}
             </div>
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Note</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Note" %}</h3><h3></h3>
             <div style="grid-column: span 2;
             display: flex;
             justify-content: center;
@@ -98,29 +129,29 @@
             </div>
 
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Files</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Files" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.waybill.id_for_label }}">{{ form.waybill.label }}</label>
+                <label for="{{ form.waybill.id_for_label }}">{% trans "Waybill" %}</label>
                 {{ form.waybill }}
             </div>
             <div>
-                <label for="{{ form.damage_report.id_for_label }}">{{ form.damage_report.label }}</label>
+                <label for="{{ form.damage_report.id_for_label }}">{% trans "Damage Report" %}</label>
                 {{ form.damage_report }}
             </div>
             <div>
-                <label for="{{ form.photo_car.id_for_label }}">{{ form.photo_car.label }}</label>
+                <label for="{{ form.photo_car.id_for_label }}">{% trans "Photo of Car" %}</label>
                 {{ form.photo_car }}
             </div>
             <div>
-                <label for="{{ form.photo_VIN.id_for_label }}">{{ form.photo_VIN.label }}</label>
+                <label for="{{ form.photo_VIN.id_for_label }}">{% trans "Phot of VIN number" %}</label>
                 {{ form.photo_VIN }}
             </div>
             <div>
-                <label for="{{ form.photo_area.id_for_label }}">{{ form.photo_area.label }}</label>
+                <label for="{{ form.photo_area.id_for_label }}">{% trans "Phot of Damaged Area" %}</label>
                 {{ form.photo_area }}
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit">{% trans "Submit" %}</button>
         </form>
     </main>
 {% endblock %}

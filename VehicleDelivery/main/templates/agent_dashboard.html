@@ -4,305 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f3f3f3;
-        }
-
-        /* Header */
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        header .logout {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        /* Main layout */
-        .container {
-            display: flex;
-            height: calc(100vh - 60px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background-color: #e0e0e0;
-            width: 250px;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar h3 {
-            margin-top: 0;
-        }
-
-        .filter-item {
-            margin-top: 15px;
-            background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-item label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .filter-item input {
-            width: 90%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .filter-item .toggle {
-            margin-left: auto;
-            font-size: 16px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        /* Content area */
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .tabs {
-            background-color: #f9f9f9;
-            display: flex;
-            justify-content: start;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .tabs button {
-            padding: 10px 20px;
-            background-color: #f9f9f9;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            border-bottom: 2px solid transparent;
-            transition: border-color 0.3s;
-        }
-
-        .tabs button.active {
-            border-color: #333;
-        }
-
-        .table-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin: 20px;
-            position: relative;
-        }
-
-        .table-action {
-            margin: 10px 20px;
-        }
-
-        .table-action button {
-            padding: 10px 15px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .table-action button:hover {
-            background-color: #555;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th {
-            text-align: left;
-            padding: 10px 0;
-            border-bottom: 2px solid #ddd;
-            font-size: 14px;
-            color: #666;
-        }
-
-        table td {
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-            align-items: center;
-        }
-
-        table td:first-child {
-            display: flex;
-            align-items: center;
-        }
-
-        table td:last-child {
-            justify-content: space-between;
-        }
-
-        .checkbox {
-            margin-right: 10px;
-        }
-
-        table tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* Highlight row when checkbox is checked */
-        table tr.highlight {
-            background-color: #d4f8d4;
-        }
-
-        /* Modern Checkbox Styling */
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #333;
-        }
-    </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggles = document.querySelectorAll('.filter-item .toggle');
-
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', () => {
-                    const input = toggle.parentElement.nextElementSibling;
-                    const isVisible = input.style.display === 'block';
-                    input.style.display = isVisible ? 'none' : 'block';
-                    toggle.textContent = isVisible ? '+' : '-';
-                });
-            });
-
-            const checkboxes = document.querySelectorAll('.checkbox');
-
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const row = checkbox.closest('tr');
-                    if (checkbox.checked) {
-                        row.classList.add('highlight');
-                    } else {
-                        row.classList.remove('highlight');
-                    }
-                });
-            });
-        });
-    </script>
+    {% load static %}
+    {% load i18n %}
+    <link rel="stylesheet" href="{% static 'DashboardCSST.css' %}">
 </head>
+
+
 <body>
     <header>
         <div class="logo">CEVA Logistics</div>
-        <button class="logout">Log out</button>
+        <nav class="navbar">
+            <ul class="navbar-links">
+                <li><a href="{% url 'agent_dashboard' %}">{% trans "Dashboard" %}</a></li>
+                <li><a href="{% url 'statistics' %}">{% trans "Statistics" %}</a></li>
+            </ul>
+        </nav>
+        <button class="logout">{% trans "Logout" %}</button>
+
     </header>
 
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <h3>Filters</h3>
-            <div class="filter-item">
-                <label for="date-from">Date from <span class="toggle">+</span></label>
-                <input type="date" id="date-from">
-            </div>
+            <form method="get" class="filter-form">
+                <h3>{% trans "Filters" %}</h3>
 
-            <div class="filter-item">
-                <label for="date-to">Date to <span class="toggle">+</span></label>
-                <input type="date" id="date-to">
-            </div>
+                <!-- Date From -->
+                <div class="filter-item">
+                    <label for="date_from">{% trans "Date from" %}</label>
+                    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
+                </div>
 
-            <div class="filter-item">
-                <label for="id">ID <span class="toggle">+</span></label>
-                <input type="text" id="id">
-            </div>
+                <!-- Date To -->
+                <div class="filter-item">
+                    <label for="date_to">{% trans "Date to" %}</label>
+                    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
+                </div>
 
-            <div class="filter-item">
-                <label for="vin">VIN <span class="toggle">+</span></label>
-                <input type="text" id="vin">
-            </div>
+                <!-- ID -->
+                <div class="filter-item">
+                    <label for="id">ID</label>
+                    <input type="text" id="id" name="id" value="{{ filters.id }}">
+                </div>
 
-            <div class="filter-item">
-                <label for="type">Type <span class="toggle">+</span></label>
-                <input type="text" id="type">
-            </div>
+                <!-- VIN -->
+                <div class="filter-item">
+                    <label for="vin">VIN</label>
+                    <input type="text" id="vin" name="vin" value="{{ filters.vin }}">
+                </div>
 
-            <div class="filter-item">
-                <label for="name">Name <span class="toggle">+</span></label>
-                <input type="text" id="name">
-            </div>
+                <!-- Name -->
+                <div class="filter-item">
+                    <label for="name">{% trans "Name" %}</label>
+                    <input type="text" id="name" name="name" value="{{ filters.first_name }}">
+                </div>
 
-            <div class="filter-item">
-                <label for="email">Email <span class="toggle">+</span></label>
-                <input type="email" id="email">
-            </div>
+                <!-- Email -->
+                <div class="filter-item">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" value="{{ filters.email }}">
+                </div>
+
+                <!-- Dropdown for Type -->
+                <div class="filter-item">
+                    <label for="type">{% trans "Type" %}</label>
+                    <select id="typeReport" name="type">
+                        <option value="" disabled {% if not filters.type %}selected{% endif %}>Select Type</option>
+                        {% for code, label in report_types %}
+                            <option value="{{ code }}" {% if filters.type == code %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="filter-button">{% trans "Filter" %}</button>
+
+                <!-- Clear Filters -->
+                <a href="{% url 'agent_dashboard' %}" class="clear-button">{% trans "Clear Filters" %}</a>
+            </form>
         </div>
 
         <!-- Content -->
         <div class="content">
-            <!-- Tabs -->
             <div class="tabs">
-                <button class="active">New</button>
-                <button>Opened</button>
-                <button>Archive</button>
+                <button class="tab-button {% if request.GET.status == 'new' %}active{% endif %}" onclick="filterByStatus('new')">{% trans "New" %}</button>
+                <button class="tab-button {% if request.GET.status == 'opened' %}active{% endif %}" onclick="filterByStatus('opened')">{% trans "Opened" %}</button>
+                <button class="tab-button {% if request.GET.status == 'archive' %}active{% endif %}" onclick="filterByStatus('archive')">{% trans "Archived" %}</button>
             </div>
 
-            <!-- Table Action Button -->
+            <script>
+                function filterByStatus(status) {
+                    // Get current URL parameters
+                    let params = new URLSearchParams(window.location.search);
+
+                    // Set the new status (or change it)
+                    params.set('status', status);
+
+                    // Preserve other query parameters
+                    window.location.search = params.toString();  // Update the URL with new parameters
+                }
+            </script>
+
             <div class="table-action">
-                <button>Move To</button>
+                <button type="button" id="moveButton" class="move-button">{% trans "Move to" %}</button>
+                <div id="statusDropdown" style="display: none;">
+                    <select id="new_status">
+                        <option value="" disabled selected>Select a status</option>
+                        <option value="new">{% trans "New" %}</option>
+                        <option value="opened">{% trans "Opened" %}</option>
+                        <option value="archive">{% trans "Archived" %}</option>
+                    </select>
+                </div>
             </div>
 
-            <!-- Table -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                // Toggle visibility of the status dropdown
+                document.getElementById("moveButton").addEventListener("click", function() {
+                    var dropdown = document.getElementById("statusDropdown");
+                    dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+                });
+
+                document.getElementById("new_status").addEventListener("change", function () {
+                    var selectedStatus = this.value; // Get the selected status
+                    var selectedEntries = [];
+
+                    // Collect selected checkbox values
+                    document.querySelectorAll('.entry-checkbox:checked').forEach(function (checkbox) {
+                        selectedEntries.push(checkbox.value);
+                    });
+
+                    // Check if any checkboxes are selected
+                    if (selectedEntries.length > 0) {
+                        // Send AJAX request to update statuses
+                        $.ajax({
+                            url: '{% url "update_status" %}', // Update with the correct URL
+                            type: 'POST',
+                            data: {
+                                'type' :  document.getElementById("typeReport").value,
+                                'new_status': selectedStatus,
+                                'selected_entries': JSON.stringify(selectedEntries), // Serialize the array as JSON
+                                'csrfmiddlewaretoken': '{{ csrf_token }}' // Include CSRF token
+                            },
+                            success: function (response) {
+                                alert('Status updated successfully!');
+                                location.reload(); // Reload the page (optional)
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error updating status.');
+                            }
+                        });
+                    } else {
+                        alert('Please select at least one entry.');
+                    }
+                });
+            </script>
+
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th></th>
                             <th>#</th>
-                            <th>Name</th>
-                            <th>Date</th>
+                            <th>{% trans "Firm" %}</th>
+                            <th>{% trans "Full name" %}</th>
+                            <th>{% trans "Date" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for entry in entries %}
                             <tr>
-                                <td><input type="checkbox" class="checkbox"></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.id}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.first_name}}</a></tb>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.date}}</a></td>
+                                <td><input type="checkbox" class="entry-checkbox" value="{{ entry.id }}"></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type %}">{{entry.id}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.firm_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.first_name}} {{entry.second_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type  %}">{{entry.date}}</a></td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">{% trans "No entries found matching the criteria." %}</td>
                             </tr>
                         {% endfor %}
-                        <!-- Add more rows as needed -->
                     </tbody>
                 </table>
             </div>
+
+            <script>
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        const row = this.closest('tr');
+                        if (this.checked) {
+                            row.style.backgroundColor = '#dceeff'; // Light blue
+                        } else {
+                            row.style.backgroundColor = ''; // Reset
+                        }
+                    });
+                });
+            </script>
         </div>
     </div>
 </body>

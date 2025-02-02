@@ -4,12 +4,254 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entry Details</title>
+    {% load static %}
+    {% load i18n %}
+    <link rel="stylesheet" href="{% static 'DashboardCSST.css' %}">
+
 </head>
+
+
+<style>
+/* Container Styling */
+.details-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 60%;
+    margin: 30px auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    color: #001f3f;
+}
+
+/* Header Styling */
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.details-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #001f3f;
+}
+
+/* Back Button */
+.back-button {
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background 0.3s, color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+/* Content Styling */
+.details-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 10px;
+}
+
+/* Individual Detail Item */
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    background-color: #e3f2fd; /* Light blue */
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+}
+
+.detail-item label {
+    font-weight: bold;
+    color: #001f3f;
+}
+
+.detail-item span {
+    color: #003366;
+    font-weight: normal;
+}
+
+.message-item {
+    grid-column: span 2; /* Makes the message span across both columns */
+    background-color: #e3f2fd; /* Light blue */
+    padding: 15px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+</style>
+
 <body>
-    <h1>Details for {{ entry.identifier }}</h1>
-    <p><strong>Firm Name:</strong> {{ entry.firm_name }}</p>
-    <p><strong>First Name:</strong> {{ entry.first_name }}</p>
-    <p><strong>Second Name:</strong> {{ entry.second_name }}</p>
-    <p><strong>Date:</strong> {{ entry.date }}</p>
+    <header>
+        <div class="logo">CEVA Logistics</div>
+        <nav class="navbar">
+            <ul class="navbar-links">
+                <li><a href="{% url 'agent_dashboard' %}">{% trans "Dashboard" %}</a></li>
+                <li><a href="{% url 'statistics' %}">{% trans "Statistics" %}</a></li>
+            </ul>
+        </nav>
+        <button class="logout">{% trans "Logout" %}</button>
+
+    </header>
+    <div class="details-container">
+        <div class="details-header">
+            <h1>{% trans "Report Details" %}</h1>
+            <a href="{% url 'agent_dashboard' %}" class="back-button">{% trans "Back to Dashboard" %}</a>
+        </div>
+
+        <div class="details-content">
+            <div class="detail-item">
+                <label for="entry-id">Entry ID:</label>
+                <span id="entry-id">{{ entry.id }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label for="entry-status">Status:</label>
+                <span id="entry-status">{{ entry.status }}</span>
+            </div>
+            <div></div><div></div>
+            <div><h3>{% trans "Details of Reporting Party" %}<h3></div><!--------------------------------------------------------------------------------------------------->
+            <div></div>
+            <div class="detail-item">
+                <label for="entry-name">{% trans "Firm name" %}</label>
+                <span id="entry-name">{{ entry.firm_name}}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-name">{% trans "First Name" %}</label>
+                <span id="entry-name">{{ entry.first_name }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-email">Email:</label>
+                <span id="entry-email">{{ entry.email }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-name">{% trans "Last Name" %}</label>
+                <span id="entry-name">{{ entry.second_name }}</span>
+            </div>
+
+
+            <div></div><div></div>
+            <div><h3>{% trans "Transport Details" %}<h3></div><!--------------------------------------------------------------------------------------------------->
+            <div></div>
+            <div class="detail-item">
+                <label for="entry-rec_num">{% trans "Record Number" %}</label>
+                <span id="entry-rec_num">{{ entry.record_number }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-reg_num">{% trans "Registration Number" %}</label>
+                <span id="entry-reg_num">{{ entry.registration_number }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-date">{% trans "Date of arrival" %}</label>
+                <span id="entry-date">{{ entry.date }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-country">{% trans "Country of Arrival" %}</label>
+                <span id="entry-country">{{ entry.country_of_arrival }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-place">{% trans "Place of Arrival" %}</label>
+                <span id="entry-place">{{ entry.place_of_arrival }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "City of Arrival" %}</label>
+                <span id="entry-city">{{ entry.city_of_arrival }}</span>
+            </div>
+
+
+
+            <div></div><div></div>
+            <div><h3>{% trans "Vehicle Damage Details" %}<h3></div><!--------------------------------------------------------------------------------------------------->
+            <div></div>
+
+            <div class="detail-item">
+                <label for="entry-city">{% trans "VIN number" %}</label>
+                <span id="entry-city">{{ entry.VIN_number }}</span>
+            </div>
+            <div></div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Nature of Damage" %}</label>
+                <span id="entry-city">{{ entry.nature_of_damage_1 }}   {{ entry.get_nature_of_damage_1_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Place of Damage" %}</label>
+                <span id="entry-city">{{ entry.place_of_damage_1 }}   {{ entry.get_place_of_damage_1_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Nature of Damage" %}</label>
+                <span id="entry-city">{{ entry.nature_of_damage_2 }}   {{ entry.get_nature_of_damage_2_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Place of Damage" %}</label>
+                <span id="entry-city">{{ entry.place_of_damage_2 }}   {{ entry.get_place_of_damage_2_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Nature of Damage" %}</label>
+                <span id="entry-city">{{ entry.nature_of_damage_3 }}   {{ entry.get_nature_of_damage_3_display }}</span>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Place of Damage" %}</label>
+                <span id="entry-city">{{ entry.place_of_damage_3 }}   {{ entry.get_place_of_damage_3_display }}</span>
+            </div>
+
+
+            <div></div><div></div>
+            <div><h3>{% trans "Note" %}<h3></div><!--------------------------------------------------------------------------------------------------->
+            <div></div>
+            <div class="detail-item message-item">
+                <label for="entry-message">Message:</label>
+                <span id="entry-message">{{ entry.message }}</span>
+            </div>
+
+
+            <div></div><div></div>
+            <div><h3>{% trans "Files" %}<h3></div><!--------------------------------------------------------------------------------------------------->
+            <div></div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Waybill" %}</label>
+                <a id="entry-document" href="{{ entry.waybill.url }}" download>
+                    {% trans "Download" %}
+                </a>
+
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Damage Report" %}</label>
+                <a id="entry-document" href="{{ entry.damage_report.url }}" download>
+                    {% trans "Download" %}
+                </a>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Photo of Car" %}</label>
+                <a id="entry-document" href="{{ entry.photo_car.url }}" download>
+                    {% trans "Download" %}
+                </a>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Phot of VIN number" %}</label>
+                <a id="entry-document" href="{{ entry.photo_VIN.url }}" download>
+                    {% trans "Download" %}
+                </a>
+            </div>
+            <div class="detail-item">
+                <label for="entry-city">{% trans "Phot of Damaged Area" %}</label>
+                <a id="entry-document" href="{{ entry.photo_area.url }}" download>
+                    {% trans "Download" %}
+                </a>
+            </div>
+
+    </div>
 </body>
 </html>

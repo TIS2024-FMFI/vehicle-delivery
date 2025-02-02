@@ -2,6 +2,7 @@
 
 {% block title %}Form Other{% endblock %}
 {% load static %}
+{% load i18n %}
 <link rel="stylesheet" href="{% static 'FormsCss.css' %}">
 {% block content %}
     <main>
@@ -9,32 +10,32 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Details of Reporting Party</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Details of Reporting Party" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.firm_name.id_for_label }}">{{ form.firm_name.label }}</label>
+                <label for="{{ form.firm_name.id_for_label }}">{% trans "Firm name" %}</label>
                 {{ form.firm_name }}
             </div>
             <div>
-                <label for="{{ form.second_name.id_for_label }}">{{ form.second_name.label }}</label>
+                <label for="{{ form.second_name.id_for_label }}">{% trans "Second name" %}</label>
                 {{ form.second_name }}
             </div>
             <div>
-                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+                <label for="{{ form.first_name.id_for_label }}">{% trans "First name" %}</label>
                 {{ form.first_name }}
             </div>
             <div>
-                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                <label for="{{ form.email.id_for_label }}">E-mail</label>
                 {{ form.email }}
             </div>
             <div>
-                <label for="{{ form.date.id_for_label }}">Date</label>
+                <label for="{{ form.date.id_for_label }}">{% trans "Date" %}</label>
                 {{ form.date }}
             </div>
             <div> </div>
 
 
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Note</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Note" %}</h3><h3></h3>
             <div style="grid-column: span 2;
             display: flex;
             justify-content: center;
@@ -47,13 +48,13 @@
             </div>
 
 
-            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">Files</h3><h3></h3>
+            <h3 style="font-size: 24px; color: #505050; text-decoration: underline; margin-bottom: 10px;">{% trans "Files" %}</h3><h3></h3>
             <div>
-                <label for="{{ form.photo.id_for_label }}">{{ form.photo.label }}</label>
+                <label for="{{ form.photo.id_for_label }}">{% trans "File" %}</label>
                 {{ form.photo }}
             </div>
 
-            <button type="submit">Submit</button>
+            <button type="submit">{% trans "Submit" %}</button>
         </form>
     </main>
 {% endblock %}
