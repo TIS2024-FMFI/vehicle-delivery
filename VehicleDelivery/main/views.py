@@ -11,7 +11,7 @@ from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES,
 from django.utils.translation import activate
 
 def home(request):
-    if (request.session["language"] == None):
+    if "language" not in request.session:
         request.session["language"] = 'en'
     activate(request.session["language"])
     return render(request, "home.html")
