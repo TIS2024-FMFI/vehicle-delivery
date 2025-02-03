@@ -59,10 +59,19 @@ button {
 .primary-button {
     background: #007bff;
     color: white;
-    width: 100%;
+    width: 90%;
     padding: 10px;
     font-size: 16px;
 }
+
+/* Primary button (Add User) */
+.search-button {
+    color: black;
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+}
+
 
 /* Secondary buttons */
 .secondary-button {
@@ -72,6 +81,22 @@ button {
 
 .secondary-button:hover {
     background: #d6d8db;
+}
+
+/* Search Form */
+.search-form {
+    margin-top: 100px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 90%;
 }
 </style>
 <!--
@@ -109,6 +134,11 @@ button {
         <button type="submit" name="add" value="add" class="primary-button">{% trans "Add User" %}</button>
     </form>
 
+    <form method="get" class="search-form">
+        <input type="text" name="search" placeholder="{% trans 'Search...' %}"><!--value="{{ search_query }}"-->
+        <button type="submit" class="search-button">{% trans "Search" %}</button>
+    </form>
+
     <form method="post">
         {% csrf_token %}
         <ul class="user-list">
@@ -123,6 +153,10 @@ button {
                             {% trans "Change Person" %}
                         </button>
                     </div>
+                </li>
+            {% empty %}
+                <li>
+                    {% trans "No Results" %}
                 </li>
             {% endfor %}
         </ul>

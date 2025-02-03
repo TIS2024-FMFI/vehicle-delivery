@@ -19,6 +19,9 @@ class ClaimForm(forms.ModelForm):
         labels = {
             "date" : "Datum vykladky"
         }
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'date-picker'})
+        }
 
     def __str__(self):
         return self.firm_name
@@ -149,6 +152,9 @@ class TransportForm(forms.ModelForm):
         model = TransportModel
         fields = "__all__"
         exclude = ['status']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'date-picker'})
+        }
 
     def __str__(self):
         return self.firm_name
@@ -160,6 +166,9 @@ class PreparationForm(forms.ModelForm):
         model = PreparationModel
         fields = "__all__"
         exclude = ['status']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'date-picker'})
+        }
 
     def __str__(self):
         return self.firm_name
@@ -171,6 +180,9 @@ class CommunicationForm(forms.ModelForm):
         model = CommunicationModel
         fields = "__all__"
         exclude = ['status']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'date-picker'})
+        }
 
     def __str__(self):
         return self.firm_name
@@ -182,6 +194,9 @@ class OtherForm(forms.ModelForm):
         model = OtherModel
         fields = "__all__"
         exclude = ['status']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'date-picker'})
+        }
 
     def __str__(self):
         return self.firm_name

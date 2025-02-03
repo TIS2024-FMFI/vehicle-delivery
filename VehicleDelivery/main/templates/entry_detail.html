@@ -103,7 +103,15 @@
                 <label for="entry-status">Status:</label>
                 <span id="entry-status">{{ entry.status }}</span>
             </div>
-            <div></div><div></div>
+            {% if entry.date_of_arrival %}
+            <div class="detail-item">
+                <label for="entry-date-of-arrival">{% trans "Recieved" %}</label>
+                <span id="entry-date-of-arrival">{{ entry.date_of_arrival}}</span>
+            </div>
+            {% endif %}
+
+
+            <div></div>
             <div><h3>{% trans "Details of Reporting Party" %}<h3></div><!--------------------------------------------------------------------------------------------------->
             <div></div>
             <div class="detail-item">
@@ -166,8 +174,9 @@
 
 
 
-            <div></div>
+
             {% if entry.VIN_number %}
+            <div></div>
             <div><h3>{% trans "Vehicle Damage Details" %}<h3></div><!--------------------------------------------------------------------------------------------------->
             {% endif %}
             <div></div>

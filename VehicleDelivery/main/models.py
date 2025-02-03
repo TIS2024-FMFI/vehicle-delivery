@@ -34,6 +34,8 @@ class Person(models.Model):
 
 
 class ClaimModel(models.Model):
+    date_of_arrival = models.DateField(auto_now_add=True)
+
     #Udaje o strane nahlasujuceho
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
@@ -101,6 +103,8 @@ class ClaimModel(models.Model):
         super().save(*args, **kwargs)
 
 class OtherModel(models.Model):
+    date_of_arrival = models.DateField(auto_now_add=True)
+
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
@@ -140,6 +144,8 @@ class OtherModel(models.Model):
         super().save(*args, **kwargs)
 
 class TransportModel(models.Model):
+    date_of_arrival = models.DateField(auto_now_add=True)
+
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
@@ -186,6 +192,8 @@ class TransportModel(models.Model):
         super().save(*args, **kwargs)
 
 class CommunicationModel(models.Model):
+    date_of_arrival = models.DateField(auto_now_add=True)
+
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)
@@ -225,6 +233,8 @@ class CommunicationModel(models.Model):
         super().save(*args, **kwargs)
 
 class PreparationModel(models.Model):
+    date_of_arrival = models.DateField(auto_now_add=True)
+
     firm_name = models.CharField(max_length=30)
     second_name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=30)

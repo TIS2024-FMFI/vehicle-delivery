@@ -10,7 +10,37 @@
     align-items: center;
     gap: 15px;
     width: 100%;
-}
+    }
+
+    .search-form {
+    margin-top: 100px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    }
+
+    .search-button {
+    color: black;
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+    }
+
+    .primary-button {
+    background: #007bff;
+    color: white;
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    }
+
+    .search-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 90%;
+    }
 </style>
 <!---
 <h1>{% trans "Departments" %}:</h1>
@@ -34,19 +64,37 @@
 
 <div class="centered-container">
     <h1>{% trans "Departments" %}</h1>
-    <form method="post" class="departments-form">
+
+    <form method="post">
         {% csrf_token %}
         <button type="submit" name="add" value="add" class="primary-button">{% trans "Add Department" %}</button>
+    </form>
+
+
+    <form method="get" class="search-form">
+        <input type="text" name="search" placeholder="{% trans 'Search...' %}"><!--value="{{ search_query }}"-->
+        <button type="submit" class="search-button">{% trans "Search" %}</button>
+    </form>
+
+    <form method="post" class="departments-form">
+        {% csrf_token %}
         <ul class="department-list">
             {% for department in departments %}
                 <li class="department_li">
                     <button type="submit" name="department" value="{{ department.id }}" class="department-button">
                         {% if department.name %}
                             {{ department.name }}
+                            <br>
+
+                            {{ department.reclamationType }} - {{department.get_reclamationType_display}}
                         {% else %}
                             No Name
                         {% endif %}
                     </button>
+                </li>
+            {% empty %}
+                <li>
+                    {% trans "No Results" %}
                 </li>
             {% endfor %}
         </ul>

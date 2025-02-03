@@ -9,13 +9,14 @@ from .forms import *
 from .models import *
 from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES
 from django.utils.translation import activate
-
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
 
 
-# Create your views here.
+
+
+#Create your views here.
 
 def no_access(request):
     activate(request.session["language"])
@@ -98,17 +99,32 @@ def form_update_person(request, id):
 
 @admin_required
 def users(request):
+    search_query = request.GET.get('search', '')
+
     activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('passwd'):
             return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
         elif request.POST.get('update'):
             return redirect(f'/update_person/{request.POST.get('update')}/')
-    user = User.objects.all().exclude(id=request.user.id).order_by('username')
-    return render(request, "registration/users.html", {'users': user})
+
+
+    users = User.objects.all().exclude(id=request.user.id).order_by('username')
+
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+
+    return render(request, "registration/users.html", {'users': users, 'search' : search_query})
 
 @admin_required
 def departments(request):
+    search_query = request.GET.get('search', '')
+
     activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('add'):
@@ -120,7 +136,15 @@ def departments(request):
         return redirect(f'/form_department/{department.id}/')
 
     departments = Department.objects.all().order_by('name')
-    return render(request, "departments/departments.html", {'departments': departments})
+
+    if search_query:
+        departments = departments.filter(name__icontains=search_query)
+
+
+    return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
+
+
+
 
 def get_name(request):
     activate(request.session["language"])
@@ -238,10 +262,11 @@ def agent_dashboard(request):
     print(input_name)
     print(input_id)
 
-    if request.user.person.department.reclamationType:
-        input_type = request.user.person.department.reclamationType
-    else:
-        input_type = "CL"
+    #if request.user.person.department.reclamationType:
+    #    input_type = request.user.person.department.reclamationType
+    #else:
+    input_type = "CL"
+
 
     filters = {
         'status': request.GET.get('status', 'new'),
