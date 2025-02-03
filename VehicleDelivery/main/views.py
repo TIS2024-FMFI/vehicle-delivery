@@ -262,10 +262,12 @@ def agent_dashboard(request):
     print(input_name)
     print(input_id)
 
-    #if request.user.person.department.reclamationType:
-    #    input_type = request.user.person.department.reclamationType
-    #else:
+
     input_type = "CL"
+    if request.user.person.department != None:
+        if request.user.person.department.reclamationType:
+            input_type = request.user.person.department.reclamationType
+
 
 
     filters = {
