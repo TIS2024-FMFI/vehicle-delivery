@@ -9,15 +9,17 @@ from .forms import *
 from .models import *
 from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES
 from django.utils.translation import activate
-
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
 
 
-# Create your views here.
+
+
+#Create your views here.
 
 def no_access(request):
+    activate(request.session["language"])
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
 def hello_world(request):
@@ -31,6 +33,7 @@ def home(request):
 
 @admin_required
 def form_department(request, id):
+    activate(request.session["language"])
     department_instance = Department.objects.get(id=id)
     if request.method == 'POST':
         if request.POST.get('delete'):
@@ -47,6 +50,7 @@ def form_department(request, id):
 
 @admin_required
 def form_create_person(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = PersonForm(request.POST)
         if form.is_valid():
@@ -58,6 +62,7 @@ def form_create_person(request):
 
 @admin_required
 def form_change_person_passwd(request, id):
+    activate(request.session["language"])
     user = User.objects.get(id=id)
     message = None
     if request.method == 'POST':
@@ -76,6 +81,7 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
+    activate(request.session["language"])
     user = User.objects.get(id=id)
     if request.method == 'POST':
         if request.POST.get('delete'):
@@ -93,16 +99,33 @@ def form_update_person(request, id):
 
 @admin_required
 def users(request):
+    search_query = request.GET.get('search', '')
+
+    activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('passwd'):
             return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
         elif request.POST.get('update'):
-            return redirect(f'/update_person/{request.POST.get('update')}/')    
-    user = User.objects.all().exclude(id=request.user.id).order_by('username')
-    return render(request, "registration/users.html", {'users': user})
+            return redirect(f'/update_person/{request.POST.get('update')}/')
+
+
+    users = User.objects.all().exclude(id=request.user.id).order_by('username')
+
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+
+
+    return render(request, "registration/users.html", {'users': users, 'search' : search_query})
 
 @admin_required
 def departments(request):
+    search_query = request.GET.get('search', '')
+
+    activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('add'):
             department = Department()
@@ -111,11 +134,20 @@ def departments(request):
             department = Department.objects.get(id=request.POST.get('department'))
 
         return redirect(f'/form_department/{department.id}/')
-    
+
     departments = Department.objects.all().order_by('name')
-    return render(request, "departments/departments.html", {'departments': departments})
+
+    if search_query:
+        departments = departments.filter(name__icontains=search_query)
+
+
+    return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
+
+
+
 
 def get_name(request):
+    activate(request.session["language"])
     if request.method == 'POST':
         form = NameForm(request.POST, request.FILES)
         if form.is_valid():
@@ -214,6 +246,7 @@ def thanks(request):
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
+@login_required
 def agent_dashboard(request):
     activate(request.session["language"])
     input_status = request.GET.get('status', 'new')
@@ -223,7 +256,19 @@ def agent_dashboard(request):
     input_vin = request.GET.get('vin', '')
     input_name = request.GET.get('first_name', '')
     input_email = request.GET.get('email', '')
-    input_type = request.GET.get('type', 'CL')
+
+
+    print(input_status)
+    print(input_name)
+    print(input_id)
+
+
+    input_type = "CL"
+    if request.user.person.department != None:
+        if request.user.person.department.reclamationType:
+            input_type = request.user.person.department.reclamationType
+
+
 
     filters = {
         'status': request.GET.get('status', 'new'),
@@ -236,7 +281,7 @@ def agent_dashboard(request):
         'type': request.GET.get('type', 'CL'),
     }
 
-    print(input_type)
+    print()
 
     context = {
         'report_types': REPORT_TYPES,
@@ -281,7 +326,9 @@ def agent_dashboard(request):
 
     return render(request, "agent_dashboard.html", context)
 
+@login_required
 def update_status(request):
+    print("Som tu----------------------------------------------------")
     if request.method == "POST":
         # Parse the received data
         new_status = request.POST.get('new_status')
@@ -295,7 +342,7 @@ def update_status(request):
 
         # Perform the status update
         if selected_entries and new_status:
-            match request.POST.get('type'):
+            match request.user.person.department.reclamationType:
                 case 'CL':
                     ClaimModel.objects.filter(id__in=selected_entries).update(status=new_status)
                 case 'CM':
@@ -314,12 +361,13 @@ def update_status(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 #(shows ClaimModel details)-----------------------------------------------------------------------
-def entry_detail(request, id, _type):
+@login_required
+def entry_detail(request, id):
     activate(request.session["language"])
 
     entry = None
 
-    match _type:
+    match request.user.person.department.reclamationType:
         case 'CL':
             entry = ClaimModel.objects.get(id=id)
         case 'CM':
@@ -334,13 +382,16 @@ def entry_detail(request, id, _type):
 
     return render(request, "entry_detail.html", {"entry" : entry})
 
+@login_required
 def statistics(request):
+    activate(request.session["language"])
     return render(request, "statistics.html")
+
+
 
 
 def no_access(request):
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
-
 
 def thanks(request):
     return render(request, "thank.html")

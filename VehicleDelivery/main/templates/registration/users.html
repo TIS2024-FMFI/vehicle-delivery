@@ -1,29 +1,166 @@
-{% extends "base.html" %}
+{% extends "base_agent.html" %}
 {% block title %}User List{% endblock %}
+{% load i18n %}
+
 
 {% block content %}
+<style>
+        form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+
+    /* Style for the user list */
+.user-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Style each user row */
+.user-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Username styling */
+.username {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Button group to keep buttons aligned */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Buttons */
+button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Primary button (Add User) */
+.primary-button {
+    background: #007bff;
+    color: white;
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* Primary button (Add User) */
+.search-button {
+    color: black;
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+}
+
+
+/* Secondary buttons */
+.secondary-button {
+    background: #e2e6ea;
+    color: black;
+}
+
+.secondary-button:hover {
+    background: #d6d8db;
+}
+
+/* Search Form */
+.search-form {
+    margin-top: 100px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 90%;
+}
+</style>
+<!--
     <h1>Users:</h1>
     <form method="get" action="{% url 'create_person' %}">
         {% csrf_token %}
         <button type="submit" name="add" value="add">Add User</button>
     </form>
-    
+
     <form method="post">
         {% csrf_token %}
-        
+
         <ul>
             {% for user in users %}
+            <li>
+                {{ user.username }}
+                <button type="submit" name="passwd" value={{user.id}}>
+                    Change Password
+                </button>
+                <button type="submit" name="update" value={{user.id}}>
+                    Change Person
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+    </form>
+-->
+
+
+<div class="centered-container">
+    <h1>{% trans "Users" %}</h1>
+
+    <form method="get" action="{% url 'create_person' %}">
+        {% csrf_token %}
+        <button type="submit" name="add" value="add" class="primary-button">{% trans "Add User" %}</button>
+    </form>
+
+    <form method="get" class="search-form">
+        <input type="text" name="search" placeholder="{% trans 'Search...' %}"><!--value="{{ search_query }}"-->
+        <button type="submit" class="search-button">{% trans "Search" %}</button>
+    </form>
+
+    <form method="post">
+        {% csrf_token %}
+        <ul class="user-list">
+            {% for user in users %}
+                <li class="user-item">
+                    <span class="username">{{ user.username }}</span>
+                    <div class="button-group">
+                        <button type="submit" name="passwd" value="{{ user.id }}" class="secondary-button">
+                            {% trans "Change Password" %}
+                        </button>
+                        <button type="submit" name="update" value="{{ user.id }}" class="secondary-button">
+                            {% trans "Change Person" %}
+                        </button>
+                    </div>
+                </li>
+            {% empty %}
                 <li>
-                    {{ user.username }}
-                    <button type="submit" name="passwd" value={{user.id}}>
-                        Change Password
-                    </button>
-                    <button type="submit" name="update" value={{user.id}}>
-                        Change Person
-                    </button>
+                    {% trans "No Results" %}
                 </li>
             {% endfor %}
         </ul>
     </form>
-   
+</div>
+
 {% endblock %}

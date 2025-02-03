@@ -20,11 +20,12 @@ class MainConfig(AppConfig):
 
 # The function that will create the admin user
 def create_admin_user(sender, **kwargs):
+    print("Something Terrible happend")
     from django.contrib.auth import get_user_model
     from .models import Person
     """Ensure an admin user always exists after migrations are done"""
     from django.db import IntegrityError
-    
+
     try:
         # Get the User model (works for both default and custom user models)
         User = get_user_model()
@@ -33,10 +34,10 @@ def create_admin_user(sender, **kwargs):
         if not Person.objects.filter(user_type='ADMIN').exists():
             # Create a new user if no Person with ADMIN user_type exists
             user = User.objects.create_user(username=username, email=mail, password=passwd)
-            
+
             # Ensure a related Person object is created for this user
             person, created = Person.objects.get_or_create(user=user)
-            
+
             # Set the user type for the related Person object
             person.user_type = 'ADMIN'
             person.save()

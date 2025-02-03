@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}My Site{% endblock %}</title>
+    <title>{% block title %}Home{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="{% static 'FormsCss.css' %}">
 </head>
@@ -25,6 +25,9 @@
             <ul class="navbar-links">
                 <li><a href="{% url 'home' %}">{% trans "Home" %}</a></li>
                 <li><a href="{% url 'form_all' %}">{% trans "Reports" %}</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'agent_dashboard' %}">{% trans "Agent Zone" %}</a></li>
+                {% endif %}
             </ul>
             <div class="language-switcher">
                 <button class="dropdown-btn" onclick="toggleDropdown()">
@@ -38,12 +41,21 @@
             </div>
             <div class="navbar-login">
                 {% if user.is_authenticated %}
+                <!--
                 <form class="logout-form" method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button class="login-button" type="submit">{% trans "Logout" %}</button>
-                  </form>
+                </form>
+                -->
+                    <a href="#" class="login-button" onclick="document.getElementById('logout-form').submit();">
+                        {% trans "Logout" %}
+                    </a>
+
+                    <form id="logout-form" class="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+                        {% csrf_token %}
+                    </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="login-button">{% trans "Login" %}</a>
+                    <a href="{% url 'login' %}" class="login-button">{% trans "Login" %}</a>
                 {% endif %}
             </div>
         </nav>
