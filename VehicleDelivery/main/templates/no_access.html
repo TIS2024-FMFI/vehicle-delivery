@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Access denied{% endblock %}
+{% load i18n %}
 
 {% block content %}
-    <h1>Access Denied</h1>
-    <p>{{ message }}</p>
-    <a href="{% url 'home' %}">Go to Home</a>
-   
+    <div style="display: flex; justify-content: center; align-items: center; height: 100px; flex-direction: column; text-align: center;">
+        <h1 style="margin-top: 100px; margin-bottom: 10px;">Access Denied</h1>
+        <h2 style="font-size: 15px;">{{ message }}</h2>
+        <a href="{% url 'home' %}">{% trans "Go Home" %}</a>
+    </div>
 {% endblock %}

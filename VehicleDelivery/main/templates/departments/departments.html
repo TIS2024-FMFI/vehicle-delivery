@@ -1,23 +1,57 @@
-{% extends "base.html" %}
+{% extends "base_agent.html" %}
 {% block title %}Departments List{% endblock %}
+{% load i18n %}
 
 {% block content %}
-    <h1>Departments:</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" name="add" value="add">Add Department</button>
-        <ul>
-            {% for department in departments %}
-                <li>
-                    <button type="submit" name="department" value={{department.id}}>
-                    {% if department.name %}
-                    {{ department.name }}
-                    {% else %}
-                    No Name
-                    {% endif %}
-                    </button></li>
+<style>
+    form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+</style>
+<!---
+<h1>{% trans "Departments" %}:</h1>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="add" value="add">{% trans "Add Department" %}</button>
+    <ul>
+        {% for department in departments %}
+        <li>
+            <button type="submit" name="department" value={{department.id}}>
+                {% if department.name %}
+                {{ department.name }}
+                {% else %}
+                No Name
+                {% endif %}
+            </button></li>
             {% endfor %}
         </ul>
     </form>
-   
+-->
+
+<div class="centered-container">
+    <h1>{% trans "Departments" %}</h1>
+    <form method="post" class="departments-form">
+        {% csrf_token %}
+        <button type="submit" name="add" value="add" class="primary-button">{% trans "Add Department" %}</button>
+        <ul class="department-list">
+            {% for department in departments %}
+                <li class="department_li">
+                    <button type="submit" name="department" value="{{ department.id }}" class="department-button">
+                        {% if department.name %}
+                            {{ department.name }}
+                        {% else %}
+                            No Name
+                        {% endif %}
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    </form>
+</div>
+
+
 {% endblock %}

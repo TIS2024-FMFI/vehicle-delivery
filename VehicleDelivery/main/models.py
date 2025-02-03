@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import date
 import datetime
-from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES
+from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES, TYPE_OF_USER
 import os
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -15,31 +15,20 @@ class Department(models.Model):
     # code = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(default=None, null=True)
-    TYPE_OF_RECLAMATION = [
-        ('C&D', 'Claim & Damage'),
-        ('TRN', 'Transportation'),
-        ('VPR', 'Vehicke preparation'),
-        ('CMN', 'Comunication'),
-        ('OTH', 'Other'),
-    ]
-    reclamationType = models.CharField(max_length=3, choices=TYPE_OF_RECLAMATION, default='OTH', blank=False)
+    reclamationType = models.CharField(max_length=3, choices=REPORT_TYPES, default='OT', blank=False)
 
     def __str__(self):
         return self.name
 
 class Person(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
-    TYPE_OF_USER = [
-        ('AGENT', 'Agent'),
-        ('ADMIN', 'Admin'),
-    ]
     # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     user_type = models.CharField(max_length=5, choices=TYPE_OF_USER, default='AGENT')
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f"{self.user.username} ({self.user_type})"
-    
+
 
 
 

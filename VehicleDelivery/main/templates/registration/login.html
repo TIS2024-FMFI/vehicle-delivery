@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Login{% endblock %}
+{% load i18n %}
 
 {% block content %}
 <main>
@@ -8,7 +9,9 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_div }}
-        <button type="submit">Log In</button>
+        <div class="submit-container">
+            <button type="submit" class="submit-button">Log In</button>
+        </div>
     </form>
 </main>
 

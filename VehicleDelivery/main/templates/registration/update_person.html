@@ -1,7 +1,17 @@
-{% extends "base.html" %}
-{% block title %}Change password{% endblock %}
-
+{% extends "base_agent.html" %}
+{% block title %}Update Person{% endblock %}
+{% load i18n %}
 {% block content %}
+<style>
+    form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+</style>
+<!--
     <h1>Change person's agency</h1>
     <p>Changing {{user}}</p>
     <form method="post">
@@ -13,4 +23,29 @@
         {% csrf_token %}
         <button class="danger" type="submit" name="delete" value="delete">Delete</button>
     </form>
+-->
+
+
+    <div class="centered-container">
+        <h1>{% trans "Change Person's Agency" %}</h1>
+        <p class="info-text">{% trans "Changing" %} <strong>{{ user }}</strong></p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" name="save" value="save" class="primary-button">
+                {% trans "Update" %}
+            </button>
+        </form>
+
+        <form method="post" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" name="delete" value="delete" class="danger-button">
+                {% trans "Delete" %}
+            </button>
+        </form>
+    </div>
 {% endblock %}

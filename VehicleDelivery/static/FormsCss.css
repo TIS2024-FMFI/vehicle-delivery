@@ -1,4 +1,4 @@
-/* Form Styles */
+/* Form Styles
 form {
     background: #f8f9fa;
     padding: 30px;
@@ -9,6 +9,20 @@ form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+}
+*/
+
+form {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    align-items: center; /* Ensure vertical alignment */
 }
 
 fieldset {
@@ -83,4 +97,21 @@ form button:hover {
 input[type="file"] {
     font-size: 14px;
     padding: 5px;
+}
+
+.submit-container {
+    grid-column: span 2; /* Make it take both columns */
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+    margin-top: 20px; /* Add some spacing from the fields */
+}
+
+.submit-button {
+    padding: 10px 20px;
+    background:  #5b91ca;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }

@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Div, Submit
 import datetime
 from django.contrib.auth.forms import UserCreationForm
+from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES, TYPE_OF_USER
 
 
 
@@ -18,6 +19,11 @@ class ClaimForm(forms.ModelForm):
         labels = {
             "date" : "Datum vykladky"
         }
+
+    def __str__(self):
+        return self.firm_name
+    def __repr__(self):
+        return self.firm_name
 
 class DepartmentForm(forms.ModelForm):
     class Meta:
@@ -63,7 +69,7 @@ class ChanngePersonPasswdForm(forms.Form):
 
 class PersonForm(UserCreationForm):
     # Add fields from the Person model
-    user_type = forms.ChoiceField(choices=Person.TYPE_OF_USER, label='User type')
+    user_type = forms.ChoiceField(choices=TYPE_OF_USER, label='User type')
     department = forms.ModelChoiceField(queryset=Department.objects.all(), label='Department')
 
     class Meta:
@@ -101,6 +107,7 @@ class PersonForm(UserCreationForm):
             )
         return user
 
+"""
 class ClaimForm(forms.Form):
     #Udaje o strane nahlasujuceho
     firm_name = forms.CharField(label="Firm name", max_length=30)
@@ -134,6 +141,7 @@ class ClaimForm(forms.Form):
         return self.firm_name
     def __repr__(self):
         return self.firm_name
+"""
 
 
 class TransportForm(forms.ModelForm):

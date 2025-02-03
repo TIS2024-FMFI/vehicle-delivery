@@ -129,3 +129,8 @@ REPORT_TYPES = [
     ('VP', _("Vehicle Preparation")),
     ('OT', _("Other"))
 ]
+
+TYPE_OF_USER = [
+    ('AGENT', 'Agent'),
+    ('ADMIN', 'Admin'),
+]
