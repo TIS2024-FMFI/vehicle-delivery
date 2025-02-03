@@ -12,9 +12,14 @@ from django.utils.translation import activate
 
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
+from .decorators import admin_required, login_required
 
 
 # Create your views here.
+
+def no_access(request):
+    return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
+
 def hello_world(request):
     return HttpResponse("Hello, World!")
 
@@ -24,6 +29,7 @@ def home(request):
     activate(request.session["language"])
     return render(request, "home.html")
 
+@admin_required
 def form_department(request, id):
     department_instance = Department.objects.get(id=id)
     if request.method == 'POST':
@@ -39,6 +45,7 @@ def form_department(request, id):
 
     return render(request, "departments/department_form.html", {'form': form})
 
+@admin_required
 def form_create_person(request):
     if request.method == 'POST':
         form = PersonForm(request.POST)
@@ -49,6 +56,7 @@ def form_create_person(request):
         form = PersonForm()
     return render(request, "registration/create_user.html", {'form': form})
 
+@admin_required
 def form_change_person_passwd(request, id):
     user = User.objects.get(id=id)
     message = None
@@ -66,6 +74,7 @@ def form_change_person_passwd(request, id):
                                                                "user": user,
                                                                "message": message})
 
+@admin_required
 def form_update_person(request, id):
     user = User.objects.get(id=id)
     if request.method == 'POST':
@@ -82,16 +91,17 @@ def form_update_person(request, id):
     return render(request, "registration/update_person.html", {'form': form,
                                                                "user": user,})
 
-
+@admin_required
 def users(request):
     if request.method == 'POST':
         if request.POST.get('passwd'):
             return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
         elif request.POST.get('update'):
             return redirect(f'/update_person/{request.POST.get('update')}/')    
-    user = User.objects.all().order_by('username')
+    user = User.objects.all().exclude(id=request.user.id).order_by('username')
     return render(request, "registration/users.html", {'users': user})
 
+@admin_required
 def departments(request):
     if request.method == 'POST':
         if request.POST.get('add'):
@@ -327,4 +337,11 @@ def entry_detail(request, id, _type):
 def statistics(request):
     return render(request, "statistics.html")
 
+
+def no_access(request):
+    return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
+
+
+def thanks(request):
+    return render(request, "thank.html")
 

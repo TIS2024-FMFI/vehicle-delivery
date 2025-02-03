@@ -1,0 +1,72 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+*.log
+
+*.env
+
+# Django
+*.log
+*.pot
+*.py[cod]
+*.cover
+*.hypothesis
+.coverage
+.cache
+*.mo
+*.db
+*.sqlite3
+
+# Django migration files
+*/migrations/*
+
+# Media and static files
+# /static/
+/media/
+
+# Virtualenv
+venv/
+.env/
+.venv/
+env/
+env.bak/
+venv.bak/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# pytest
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.hypothesis
+
+# mypy
+.mypy_cache/
+
+# Coverage reports
+*.coveragerc
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# tox
+.tox/
+
+# celery beat schedule file
+celerybeat-schedule.*
