@@ -4,7 +4,7 @@
 
 {% block content %}
     <div style="display: flex; justify-content: center; align-items: center; height: 100px; flex-direction: column; text-align: center;">
-        <h1 style="margin-top: 100px; margin-bottom: 10px;">Access Denied</h1>
+        <h1 style="margin-top: 100px; margin-bottom: 10px;">{% trans "Access Denied" %}</h1>
         <h2 style="font-size: 15px;">{{ message }}</h2>
         <a href="{% url 'home' %}">{% trans "Go Home" %}</a>
     </div>

@@ -81,6 +81,8 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
+    if (request.user.id == id):
+        return redirect('/users/')
     activate(request.session["language"])
     user = User.objects.get(id=id)
     if request.method == 'POST':
@@ -144,23 +146,6 @@ def departments(request):
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
 
-
-
-def get_name(request):
-    activate(request.session["language"])
-    if request.method == 'POST':
-        form = NameForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_person = Person(
-                name=form.cleaned_data['your_name'],
-                email=form.cleaned_data['email'],
-                profile_image=form.cleaned_data['profile_image'],
-                category=form.cleaned_data['category']
-            )
-            new_person.save()
-            return HttpResponseRedirect('/thanks/')
-    else:
-        form = NameForm()
 
 def switch_language(request, language_code):
     activate(language_code)
