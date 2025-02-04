@@ -121,7 +121,7 @@ button {
                 <li><a href="{% url 'agent_dashboard' %}">{% trans "Dashboard" %}</a></li>
                 <li><a href="{% url 'statistics' %}">{% trans "Statistics" %}</a></li>
                 <li><a href="{% url 'change_passwd' %}">{% trans "Change password" %}</a></li>
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.person.userType == 'ADMIN'%}
                     <li><a href="{% url 'users' %}">{% trans "Manage Users" %}</a></li>
                     <li><a href="{% url 'departments' %}">{% trans "Manage Departments" %}</a></li>
                 {% endif %}
