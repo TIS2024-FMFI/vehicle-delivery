@@ -95,12 +95,12 @@
 
         <div class="details-content">
             <div class="detail-item">
-                <label for="entry-id">Entry ID:</label>
+                <label for="entry-id">{% trans "Entry ID" %}:</label>
                 <span id="entry-id">{{ entry.id }}</span>
             </div>
 
             <div class="detail-item">
-                <label for="entry-status">Status:</label>
+                <label for="entry-status"> {% trans "Status" %}:</label>
                 <span id="entry-status">{{ entry.status }}</span>
             </div>
             {% if entry.date_of_arrival %}
@@ -123,7 +123,7 @@
                 <span id="entry-name">{{ entry.first_name }}</span>
             </div>
             <div class="detail-item">
-                <label for="entry-email">Email:</label>
+                <label for="entry-email">{% trans "Email" %}:</label>
                 <span id="entry-email">{{ entry.email }}</span>
             </div>
             <div class="detail-item">
@@ -241,7 +241,7 @@
             <div><h3>{% trans "Note" %}<h3></div><!--------------------------------------------------------------------------------------------------->
             <div></div>
             <div class="detail-item message-item">
-                <label for="entry-message">Message:</label>
+                <label for="entry-message">{% trans "Message" %}:</label>
                 <span id="entry-message">{{ entry.message }}</span>
             </div>
 

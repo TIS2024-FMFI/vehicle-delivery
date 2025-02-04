@@ -3,7 +3,7 @@
 {% block title %}Thank Page{% endblock %}
 
 {% block content %}
-<h1>Submissions List</h1>
+<h1>{% trans "Submissions List" %}</h1>
 <ul>
     {% for person in people %}
     <li>{{ person.name|add:";"|add:person.email }}</li>
