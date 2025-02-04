@@ -81,6 +81,8 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
+    if (request.user.id == id):
+        return redirect('/users/')
     activate(request.session["language"])
     user = User.objects.get(id=id)
     if request.method == 'POST':
