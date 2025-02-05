@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "main",
     'crispy_forms',
     'crispy_bootstrap5',
+    'openpyxl',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  # Ensure the chosen pack is allowed

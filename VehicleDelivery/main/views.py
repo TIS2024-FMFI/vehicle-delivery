@@ -12,6 +12,7 @@ from django.utils.translation import activate
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
+from .export import export_single_object, download_all_files
 
 
 
@@ -366,8 +367,13 @@ def entry_detail(request, id):
             case 'OT':
                 entry = OtherModel.objects.get(id=id)
 
-
-    return render(request, "entry_detail.html", {"entry" : entry})
+    if request.method == "POST":
+        if "export" in request.POST:
+            return export_single_object(request, id, entry.__class__)
+        elif "download" in request.POST:
+            return download_all_files(request, id, entry.__class__)
+    else:
+        return render(request, "entry_detail.html", {"entry" : entry})
 
 @login_required
 def statistics(request):
