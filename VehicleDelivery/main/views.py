@@ -351,18 +351,20 @@ def entry_detail(request, id):
     activate(request.session["language"])
 
     entry = None
-
-    match request.user.person.department.reclamationType:
-        case 'CL':
-            entry = ClaimModel.objects.get(id=id)
-        case 'CM':
-            entry = CommunicationModel.objects.get(id=id)
-        case 'TR':
-            entry = TransportModel.objects.get(id=id)
-        case 'VP':
-            entry = PreparationModel.objects.get(id=id)
-        case 'OT':
-            entry = OtherModel.objects.get(id=id)
+    if request.user.person.department == None:
+        entry = ClaimModel.objects.get(id=id)
+    else:
+        match request.user.person.department.reclamationType:
+            case 'CL':
+                entry = ClaimModel.objects.get(id=id)
+            case 'CM':
+                entry = CommunicationModel.objects.get(id=id)
+            case 'TR':
+                entry = TransportModel.objects.get(id=id)
+            case 'VP':
+                entry = PreparationModel.objects.get(id=id)
+            case 'OT':
+                entry = OtherModel.objects.get(id=id)
 
 
     return render(request, "entry_detail.html", {"entry" : entry})
