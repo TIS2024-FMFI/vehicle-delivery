@@ -17,8 +17,6 @@ from django.conf import settings
 from .models import ClaimModel, Person
 
 
-
-
 #Create your views here.
 
 def no_access(request):
@@ -167,22 +165,13 @@ def form_claim(request):
             claim.status = 'new'
             claim.save()
 
-            mail_send(request, claim.id)  # send mail to customer
+            mail_send(claim, 'CL')  # send mail to customer
 
-            available_mail = None
+            departments = Department.objects.filter(reclamationType='CL')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(claim, department.email)
 
-            department = Department.objects.first()
-            available_mail = department.email
-
-            #                       ###FOR TESTING###
-            # department = Department.objects.all() # Adjust this logic as needed
-            # for el in department:
-            #     if el.email == "futurecompanymail@gmail.com":
-            #         available_mail = el.email
-
-
-            if department and available_mail:
-                send_claim_email_to_agent(claim, available_mail)  # send mail to agent
 
             return HttpResponseRedirect('/form_claim/')
     else:
@@ -196,8 +185,17 @@ def form_communication(request):
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            communication = form.save(commit=False)
+            communication.status = 'new'
+            communication.save()
+
+            mail_send(communication, 'CM')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='CM')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(communication, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = CommunicationForm()
@@ -210,13 +208,21 @@ def form_other(request):
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            other = form.save(commit=False)
+            other.status = 'new'
+            other.save()
+
+            mail_send(other, 'OT')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='OT')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(other, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = OtherForm()
 
-    print(form.errors)
     return render(request, "form_other.html", {'form': form})
 
 
@@ -225,8 +231,17 @@ def form_transport(request):
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            transport = form.save(commit=False)
+            transport.status = 'new'
+            transport.save()
+
+            mail_send(transport, 'TR')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='TR')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(transport, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = TransportForm()
@@ -239,8 +254,17 @@ def form_preparation(request):
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            prepair = form.save(commit=False)
+            prepair.status = 'new'
+            prepair.save()
+
+            mail_send(prepair, 'VP')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='VP')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(prepair, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = PreparationForm()
@@ -397,18 +421,41 @@ def form_claim_next(request):
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
             complaint = form.save()
-            mail_send(request, complaint.id)
+            mail_send(complaint)
 
             return HttpResponse("Claim submitted successfully, notification sent")
         else:
             form = ClaimForm()
         return render(request, "thank.html", {'form': form})
 
-def mail_send(request, complaint_id):
-    try:
-        complaint = ClaimModel.objects.get(pk=complaint_id)
-    except ClaimModel.DoesNotExist:
-        return HttpResponse("Complaint not found.", status=404)
+def mail_send(claim, complaint_type):
+    complaint = None
+    match complaint_type:
+        case 'CL':
+            try:
+                complaint = ClaimModel.objects.get(pk=claim.id)
+            except ClaimModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'CM':
+            try:
+                complaint = CommunicationModel.objects.get(pk=claim.id)
+            except CommunicationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'TR':
+            try:
+                complaint = TransportModel.objects.get(pk=claim.id)
+            except TransportModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'VP':
+            try:
+                complaint = PreparationModel.objects.get(pk=claim.id)
+            except PreparationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'OT':
+            try:
+                complaint = OtherModel.objects.get(pk=claim.id)
+            except OtherModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
 
     subject = "Complaint Submitted Successfully"
     message = f"""
@@ -416,9 +463,6 @@ def mail_send(request, complaint_id):
 
     Thank you for submitting your complaint with us. Here are the details of your submission:
 
-    - Firm Name: {complaint.firm_name}
-    - Record Number: {complaint.record_number}
-    - VIN: {complaint.VIN_number}
     - Submission Date: {complaint.date}
     - Message: {complaint.message}
 
@@ -442,7 +486,7 @@ def mail_send(request, complaint_id):
 
 def send_claim_email_to_agent(claim, agent_email):
     subject = "New Claim Submission"
-    message = f"""
+    message = """
     A new claim has been submitted with the following details:
 
     Please review the claim and take appropriate action.

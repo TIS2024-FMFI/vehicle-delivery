@@ -166,6 +166,9 @@ class TransportModel(models.Model):
 
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+
+    # def get_type(self):
+    #     return "Transport"
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
