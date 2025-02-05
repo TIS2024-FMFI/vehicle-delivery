@@ -4,15 +4,59 @@
 {% load i18n %}
 
 {% block content %}
-<main>
+<style>
+.helptext {
+        color : gray;
+        font-size: 14px;
+    }
+
+    .form-group div {
+        margin-bottom: 20px;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+    }
+
+    form div {
+        width: 450px;
+    }
+
+    .primary-button {
+    background: #007bff;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    }
+
+
+    .errorlist {
+    color: red;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* Adjust as needed */
+    grid-column: span 2; /* Ensure it spans across grid columns */
+    }
+
+
+</style>
+
+<div class="centered-container">
     <h1>{% trans "Password change" %}</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_div }}
         <div class="submit-container">
-            <button type="submit" class="submit-button">{% trans "Change" %}</button>
+            <button type="submit" class="primary-button">{% trans "Change" %}</button>
         </div>
     </form>
-</main>
+</div>
 
 {% endblock %}

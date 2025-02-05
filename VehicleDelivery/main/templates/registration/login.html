@@ -4,6 +4,17 @@
 {% load i18n %}
 
 {% block content %}
+<style>
+    .errorlist.nonfield {
+    color: red;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* Adjust as needed */
+    grid-column: span 2; /* Ensure it spans across grid columns */
+}
+</style>
 <main>
     <h1>Login</h1>
     <form method="post">
