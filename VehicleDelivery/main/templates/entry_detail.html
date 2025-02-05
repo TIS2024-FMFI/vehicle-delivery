@@ -91,7 +91,16 @@
         <div class="details-header">
             <h1>{% trans "Report Details" %}</h1>
             <a href="{% url 'agent_dashboard' %}" class="back-button">{% trans "Back to Dashboard" %}</a>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="export">📥 Export to Excel</button>
+            </form>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="download" class="download-all-button">📦 Download All Files</button>
+            </form>
         </div>
+        
 
         <div class="details-content">
             <div class="detail-item">
