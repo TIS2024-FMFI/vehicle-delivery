@@ -144,7 +144,6 @@ def departments(request):
 
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
-
 def switch_language(request, language_code):
     activate(language_code)
     request.session["language"] = language_code

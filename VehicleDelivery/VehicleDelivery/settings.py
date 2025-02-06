@@ -146,10 +146,6 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Login and Logout URLs
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = '/'
-
 # Email notification
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For testing
 EMAIL_HOST = 'smtp.gmail.com'
