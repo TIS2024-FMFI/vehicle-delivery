@@ -12,15 +12,12 @@ from django.utils.translation import activate
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
-<<<<<<< HEAD
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import ClaimModel, Person
-=======
 from .export import export_single_object, download_all_files
 
 
->>>>>>> main
 
 
 #Create your views here.
@@ -39,7 +36,7 @@ def home(request):
     return render(request, "home.html")
 
 @admin_required
-def form_department(request, id):
+def form_update_department(request, id):
     activate(request.session["language"])
     department_instance = Department.objects.get(id=id)
     if request.method == 'POST':
@@ -53,7 +50,21 @@ def form_department(request, id):
     else:
         form = DepartmentForm(instance=department_instance)
 
-    return render(request, "departments/department_form.html", {'form': form})
+    return render(request, "departments/department_form.html", {'form': form,
+                                                                'creating_new': False})
+
+@admin_required
+def form_create_department(request):
+    activate(request.session["language"])
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/departments/')
+    else:
+        form = DepartmentForm()
+    return render(request, "departments/department_form.html", {'form': form,
+                                                                'creating_new': True})
 
 @admin_required
 def form_create_person(request):
@@ -136,11 +147,10 @@ def departments(request):
 
     activate(request.session["language"])
     if request.method == 'POST':
-        if request.POST.get('add'):
-            department = Department()
-            department.save()
-        elif request.POST.get('department'):
-            department = Department.objects.get(id=request.POST.get('department'))
+        # if request.POST.get('add'):
+        #     return redirect(f'/form_department/')
+        # elif request.POST.get('department'):
+        department = Department.objects.get(id=request.POST.get('department'))
 
         return redirect(f'/form_department/{department.id}/')
 
@@ -152,11 +162,8 @@ def departments(request):
 
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> main
 def switch_language(request, language_code):
     activate(language_code)
     request.session["language"] = language_code
