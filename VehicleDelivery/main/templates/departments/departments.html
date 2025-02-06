@@ -65,9 +65,8 @@
 <div class="centered-container">
     <h1>{% trans "Departments" %}</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" name="add" value="add" class="primary-button">{% trans "Add Department" %}</button>
+    <form method="get" action="/create_department">
+        <button type="submit" class="primary-button">{% trans "Add Department" %}</button>
     </form>
 
 
