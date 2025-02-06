@@ -41,10 +41,6 @@ class UpdatePersonForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = ['user_type', 'department']
-        # labels = {
-        #     "user_type" : "User type",
-        #     "department" : "Department"
-        # }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,7 +51,6 @@ class UpdatePersonForm(forms.ModelForm):
 
 
     def save(self, commit=True):
-        # Save the User model first
         person = super().save(commit=commit)
 
         if commit:
@@ -71,13 +66,12 @@ class ChanngePersonPasswdForm(forms.Form):
 
 
 class PersonForm(UserCreationForm):
-    # Add fields from the Person model
     user_type = forms.ChoiceField(choices=TYPE_OF_USER, label='User type')
     department = forms.ModelChoiceField(queryset=Department.objects.all(), label='Department')
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2'] #, 'email', 'first_name', 'last_name']
+        fields = ['username', 'password1', 'password2']
 
     def __init__(self, *args, **kwargs):
         user_instance = kwargs.get('instance')
@@ -89,19 +83,12 @@ class PersonForm(UserCreationForm):
                 self.fields['user_type'].initial = person_instance.user_type
                 self.fields['department'].initial = person_instance.department
             except Person.DoesNotExist:
-                # Handle the case where no Person object exists for the User
                 pass
 
 
     def save(self, commit=True):
-        # Save the User model first
         user = super().save(commit=commit)
 
-        # Update the email field of the User model
-        # self.instance.email = user.username
-        # self.instance.save()
-
-        # Then save the Person model
         if commit:
             Person.objects.create(
                 user=user,

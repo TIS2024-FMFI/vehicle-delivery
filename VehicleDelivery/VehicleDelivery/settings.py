@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "main",
     'crispy_forms',
     'crispy_bootstrap5',
+    'openpyxl',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  # Ensure the chosen pack is allowed
@@ -146,6 +147,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 # Email notification
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For testing
 EMAIL_HOST = 'smtp.gmail.com'
@@ -153,3 +155,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'futurecompanymail@gmail.com'  # tested email
 EMAIL_HOST_PASSWORD = 'emwc wesw umbj vaym'  # SEVA_test generated password
+=======
+# Login and Logout URLs
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/agent_dashboard/'
+>>>>>>> main

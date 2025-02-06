@@ -1,0 +1,13 @@
+{% extends "base_agent.html" %}
+
+{% block title %}Password change{% endblock %}
+{% load i18n %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100px; flex-direction: column; text-align: center;">
+    <h1>{% trans "Password changed successfully" %}</h1>
+    <a href="{% url 'agent_dashboard' %}">{% trans "Go Back" %}</a>
+</div>
+
+{% endblock %}

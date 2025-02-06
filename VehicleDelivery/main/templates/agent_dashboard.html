@@ -42,7 +42,7 @@
 
                 <!-- Email -->
                 <div class="filter-item">
-                    <label for="email">Email</label>
+                    <label for="email">{% trans "Email" %}</label>
                     <input type="text" id="email" name="email" value="{{ filters.email }}">
                 </div>
 
@@ -132,7 +132,7 @@
                 <button type="button" id="moveButton" class="move-button">{% trans "Move to" %}</button>
                 <div id="statusDropdown" style="display: none;">
                     <select id="new_status">
-                        <option value="" disabled selected>Select a status</option>
+                        <option value="" disabled selected>{% trans "Select a status" %}</option>
                         <option value="new">{% trans "New" %}</option>
                         <option value="opened">{% trans "Opened" %}</option>
                         <option value="archive">{% trans "Archived" %}</option>

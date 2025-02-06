@@ -12,9 +12,15 @@ from django.utils.translation import activate
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
+<<<<<<< HEAD
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import ClaimModel, Person
+=======
+from .export import export_single_object, download_all_files
+
+
+>>>>>>> main
 
 
 #Create your views here.
@@ -82,6 +88,8 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
+    if (request.user.id == id):
+        return redirect('/users/')
     activate(request.session["language"])
     user = User.objects.get(id=id)
     if request.method == 'POST':
@@ -144,6 +152,11 @@ def departments(request):
 
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> main
 def switch_language(request, language_code):
     activate(language_code)
     request.session["language"] = language_code
@@ -394,21 +407,28 @@ def entry_detail(request, id):
     activate(request.session["language"])
 
     entry = None
+    if request.user.person.department == None:
+        entry = ClaimModel.objects.get(id=id)
+    else:
+        match request.user.person.department.reclamationType:
+            case 'CL':
+                entry = ClaimModel.objects.get(id=id)
+            case 'CM':
+                entry = CommunicationModel.objects.get(id=id)
+            case 'TR':
+                entry = TransportModel.objects.get(id=id)
+            case 'VP':
+                entry = PreparationModel.objects.get(id=id)
+            case 'OT':
+                entry = OtherModel.objects.get(id=id)
 
-    match request.user.person.department.reclamationType:
-        case 'CL':
-            entry = ClaimModel.objects.get(id=id)
-        case 'CM':
-            entry = CommunicationModel.objects.get(id=id)
-        case 'TR':
-            entry = TransportModel.objects.get(id=id)
-        case 'VP':
-            entry = PreparationModel.objects.get(id=id)
-        case 'OT':
-            entry = OtherModel.objects.get(id=id)
-
-
-    return render(request, "entry_detail.html", {"entry" : entry})
+    if request.method == "POST":
+        if "export" in request.POST:
+            return export_single_object(request, id, entry.__class__)
+        elif "download" in request.POST:
+            return download_all_files(request, id, entry.__class__)
+    else:
+        return render(request, "entry_detail.html", {"entry" : entry})
 
 @login_required
 def statistics(request):

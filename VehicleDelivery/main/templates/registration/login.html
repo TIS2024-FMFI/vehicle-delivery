@@ -4,13 +4,24 @@
 {% load i18n %}
 
 {% block content %}
+<style>
+    .errorlist.nonfield {
+    color: red;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center; /* Adjust as needed */
+    grid-column: span 2; /* Ensure it spans across grid columns */
+}
+</style>
 <main>
     <h1>Login</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_div }}
         <div class="submit-container">
-            <button type="submit" class="submit-button">Log In</button>
+            <button type="submit" class="submit-button">{% trans "Log In" %}</button>
         </div>
     </form>
 </main>

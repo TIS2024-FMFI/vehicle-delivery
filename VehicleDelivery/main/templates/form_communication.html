@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'FormsCss.css' %}">
 {% block content %}
     <main>
-        <h1>Comunication</h1>
+        <h1>{% trans "Comunication" %}</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
@@ -24,7 +24,7 @@
                 {{ form.first_name }}
             </div>
             <div>
-                <label for="{{ form.email.id_for_label }}">E-mail</label>
+                <label for="{{ form.email.id_for_label }}">{% trans "E-mail" %}</label>
                 {{ form.email }}
             </div>
             <div>
