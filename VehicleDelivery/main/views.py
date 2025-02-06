@@ -484,11 +484,15 @@ def mail_send(claim, complaint_type):
     return HttpResponse("Email notification sent successfully.")
 
 
-def send_claim_email_to_agent(claim, agent_email):
+def send_claim_email_to_agent(complaint, agent_email):
     subject = "New Claim Submission"
-    message = """
-    A new claim has been submitted with the following details:
-
+    message = f"""
+    A new complaint has been submitted with the following details:
+    
+    - Complaint id: {complaint.id}
+    - Submission Date: {complaint.date}
+    - Message: {complaint.message}
+    
     Please review the claim and take appropriate action.
     """
 
