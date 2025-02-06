@@ -314,7 +314,7 @@ def agent_dashboard(request):
 
 @login_required
 def update_status(request):
-    print("Som tu----------------------------------------------------")
+    #print("Som tu----------------------------------------------------")
     if request.method == "POST":
         # Parse the received data
         new_status = request.POST.get('new_status')

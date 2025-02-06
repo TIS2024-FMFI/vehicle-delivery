@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import now
 from datetime import date
 import datetime
 from .dropdown_options import NATURE_OF_DAMAGE, PLACE_OF_DAMAGE, STATUS_CHOICES, REPORT_TYPES, TYPE_OF_USER
@@ -278,5 +278,23 @@ class PreparationModel(models.Model):
         super().save(*args, **kwargs)
 
 
+class ActionLog(models.Model):
+    timestamp = models.DateTimeField(default=now)
+    user = models.ForeignKey(Person, on_delete=models.SET_NULL, blank=True, null=True, related_name="user_set")
+    target_user = models.ForeignKey(Person, on_delete=models.SET_NULL, blank=True, null=True, related_name="target_user_set")
+    target_complaint_type = models.CharField(max_length=100, blank=True, null=True)
+    target_complaint_id = models.PositiveIntegerField(blank=True, null=True)
+    action = models.CharField(max_length=100)
+    original_value = models.CharField(max_length=100, blank=True, null=True)
+    new_value = models.CharField(max_length=100, blank=True, null=True)
 
+    def log(user, target_user, target_complaint_type, target_complaint_id, action, original_value, new_value):
+        ...
 
+# user creation             user, target_u, action, newW
+# user password change
+# user department change
+# department creation
+# complaint creation
+# complaint status change
+# complaint export

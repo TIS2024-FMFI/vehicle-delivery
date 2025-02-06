@@ -6,6 +6,9 @@ from django.db.models import FileField, ImageField, DateField
 from main.models import *
 import zipfile
 import os
+from VehicleDelivery.settings import LOGGING
+
+logger = LOGGING.getLogger("logger")
 
 
 def export_single_object(request, obj_id, model):
@@ -61,6 +64,9 @@ def export_single_object(request, obj_id, model):
     response["Content-Disposition"] = f'attachment; filename="complaint_{obj_id}.xlsx"'
 
     workbook.save(response)
+
+    logger.info(f"User {request.user} is downloading files for object {obj_id}")
+    logger.debug(f"User {request.user} is downloading files for object {obj_id}")
     return response
 
 
