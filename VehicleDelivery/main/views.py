@@ -12,9 +12,15 @@ from django.utils.translation import activate
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
+<<<<<<< HEAD
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import ClaimModel, Person
+=======
 from .export import export_single_object, download_all_files
 
 
+>>>>>>> main
 
 
 #Create your views here.
@@ -107,9 +113,9 @@ def users(request):
     activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('passwd'):
-            return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
+            return redirect(f"/change_passwd/{request.POST.get('passwd')}/")
         elif request.POST.get('update'):
-            return redirect(f'/update_person/{request.POST.get('update')}/')
+            return redirect(f"/update_person/{request.POST.get('update')}/")
 
 
     users = User.objects.all().exclude(id=request.user.id).order_by('username')
@@ -146,92 +152,144 @@ def departments(request):
 
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> main
 def switch_language(request, language_code):
     activate(language_code)
     request.session["language"] = language_code
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-
-
-
 def form_all(request):
     activate(request.session["language"])
     return render(request, "forms.html")
+
 
 def form_claim(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
-            return HttpResponseRedirect('/thanks/')
+            claim = form.save(commit=False)
+            claim.status = 'new'
+            claim.save()
+
+            mail_send(claim, 'CL')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='CL')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(claim, department.email)
+
+
+            return HttpResponseRedirect('/form_claim/')
     else:
         form = ClaimForm()
 
     return render(request, "form_claim.html", {'form': form})
+
 
 def form_communication(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            communication = form.save(commit=False)
+            communication.status = 'new'
+            communication.save()
+
+            mail_send(communication, 'CM')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='CM')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(communication, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = CommunicationForm()
 
     return render(request, "form_communication.html", {'form': form})
 
+
 def form_other(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            other = form.save(commit=False)
+            other.status = 'new'
+            other.save()
+
+            mail_send(other, 'OT')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='OT')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(other, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = OtherForm()
 
-    print(form.errors)
     return render(request, "form_other.html", {'form': form})
+
 
 def form_transport(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            transport = form.save(commit=False)
+            transport.status = 'new'
+            transport.save()
+
+            mail_send(transport, 'TR')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='TR')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(transport, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = TransportForm()
 
     return render(request, "form_transport.html", {'form': form})
 
+
 def form_preparation(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
-            form.status = 'new'
-            form.save()
+            prepair = form.save(commit=False)
+            prepair.status = 'new'
+            prepair.save()
+
+            mail_send(prepair, 'VP')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='VP')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(prepair, department.email)
+
             return HttpResponseRedirect('/thanks/')
     else:
         form = PreparationForm()
 
     return render(request, "form_preparation.html", {'form': form})
 
+
 def thanks(request):
     activate(request.session["language"])
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
+
 @login_required
 def agent_dashboard(request):
     activate(request.session["language"])
@@ -248,13 +306,10 @@ def agent_dashboard(request):
     print(input_name)
     print(input_id)
 
-
     input_type = "CL"
     if request.user.person.department != None:
         if request.user.person.department.reclamationType:
             input_type = request.user.person.department.reclamationType
-
-
 
     filters = {
         'status': request.GET.get('status', 'new'),
@@ -380,7 +435,93 @@ def statistics(request):
     activate(request.session["language"])
     return render(request, "statistics.html")
 
+def form_claim_next(request):
+    if request.methid == 'POST':
+        form = ClaimForm(request.POST, request.FILES)
+        if form.is_valid():
+            complaint = form.save()
+            mail_send(complaint)
 
+            return HttpResponse("Claim submitted successfully, notification sent")
+        else:
+            form = ClaimForm()
+        return render(request, "thank.html", {'form': form})
+
+def mail_send(claim, complaint_type):
+    complaint = None
+    match complaint_type:
+        case 'CL':
+            try:
+                complaint = ClaimModel.objects.get(pk=claim.id)
+            except ClaimModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'CM':
+            try:
+                complaint = CommunicationModel.objects.get(pk=claim.id)
+            except CommunicationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'TR':
+            try:
+                complaint = TransportModel.objects.get(pk=claim.id)
+            except TransportModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'VP':
+            try:
+                complaint = PreparationModel.objects.get(pk=claim.id)
+            except PreparationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'OT':
+            try:
+                complaint = OtherModel.objects.get(pk=claim.id)
+            except OtherModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+
+    subject = "Complaint Submitted Successfully"
+    message = f"""
+    Dear {complaint.first_name} {complaint.second_name},
+
+    Thank you for submitting your complaint with us. Here are the details of your submission:
+
+    - Submission Date: {complaint.date}
+    - Message: {complaint.message}
+
+    Our team will review your complaint and contact you soon.
+
+    Best regards,
+    CEVA Logistic
+    """
+    recipient = complaint.email
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,  # sender
+        [recipient],
+        fail_silently=False,
+    )
+
+    return HttpResponse("Email notification sent successfully.")
+
+
+def send_claim_email_to_agent(complaint, agent_email):
+    subject = "New Claim Submission"
+    message = f"""
+    A new complaint has been submitted with the following details:
+    
+    - Complaint id: {complaint.id}
+    - Submission Date: {complaint.date}
+    - Message: {complaint.message}
+    
+    Please review the claim and take appropriate action.
+    """
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,  # Sender's email
+        [agent_email],  # Agent's email
+        fail_silently=False,
+    )
 
 
 def no_access(request):
