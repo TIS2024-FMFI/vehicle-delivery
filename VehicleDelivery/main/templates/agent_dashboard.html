@@ -48,7 +48,7 @@
 
                 <input type="hidden" name="status" value="{{ request.GET.status }}">
 
-                <!-- Dropdown for Type
+                <!-- Dropdown for Type-->
                 <div class="filter-item">
                     <label for="type">{% trans "Type" %}</label>
                     <select id="typeReport" name="type">
@@ -58,7 +58,6 @@
                         {% endfor %}
                     </select>
                 </div>
-                -->
 
                 <!-- Submit Button -->
                 <button type="submit" class="filter-button">{% trans "Filter" %}</button>
@@ -70,27 +69,6 @@
 
         <!-- Content -->
         <div class="content">
-
-            <!---
-            <div class="tabs" id="status" name="status" value="{{ filters.status }}">
-                <button class="tab-button {% if request.GET.status == 'new' %}active{% endif %}" onclick="filterByStatus('new')">{% trans "New" %}</button>
-                <button class="tab-button {% if request.GET.status == 'opened' %}active{% endif %}" onclick="filterByStatus('opened')">{% trans "Opened" %}</button>
-                <button class="tab-button {% if request.GET.status == 'archive' %}active{% endif %}" onclick="filterByStatus('archive')">{% trans "Archived" %}</button>
-            </div>
-
-            <script>
-                function filterByStatus(status) {
-                    // Get current URL parameters
-                    let params = new URLSearchParams(window.location.search);
-
-                    // Set the new status (or change it)
-                    params.set('status', status);
-
-                    // Preserve other query parameters
-                    window.location.search = params.toString();  // Update the URL with new parameters
-                }
-            </script>
-            -->
                 <div class="tabs" id="status" name="status">
                     <button class="tab-button {% if filters.status == 'new' %}active{% endif %}" onclick="filterByStatus('new')">{% trans "New" %}</button>
                     <button class="tab-button {% if filters.status == 'opened' %}active{% endif %}" onclick="filterByStatus('opened')">{% trans "Opened" %}</button>
@@ -199,10 +177,10 @@
                         {% for entry in entries %}
                             <tr>
                                 <td><input type="checkbox" class="entry-checkbox" value="{{ entry.id }}"></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.id}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.firm_name}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.first_name}} {{entry.second_name}}</a></td>
-                                <td><a href="{% url 'entry_detail' entry.id %}">{{entry.date}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type%}">{{entry.id}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type%}">{{entry.firm_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type%}">{{entry.first_name}} {{entry.second_name}}</a></td>
+                                <td><a href="{% url 'entry_detail' entry.id filters.type%}">{{entry.date}}</a></td>
                             </tr>
                         {% empty %}
                             <tr>

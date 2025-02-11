@@ -18,8 +18,6 @@ from .models import ClaimModel, Person
 from .export import export_single_object, download_all_files
 
 
-
-
 #Create your views here.
 
 def no_access(request):
@@ -161,7 +159,6 @@ def departments(request):
 
 
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
-
 
 
 def switch_language(request, language_code):
@@ -307,16 +304,19 @@ def agent_dashboard(request):
     input_vin = request.GET.get('vin', '')
     input_name = request.GET.get('first_name', '')
     input_email = request.GET.get('email', '')
+    input_type = request.GET.get('type', '')
 
 
-    print(input_status)
-    print(input_name)
-    print(input_id)
+    if (input_type == ''):
+        if request.user.person.department != None:
+            if request.user.person.department.reclamationType:
+                input_type = request.user.person.department.reclamationType # normal agent
+            else:
+                input_type = "CL" #something went wrong
+        else:
+            input_type = "CL" #admin
 
-    input_type = "CL"
-    if request.user.person.department != None:
-        if request.user.person.department.reclamationType:
-            input_type = request.user.person.department.reclamationType
+
 
     filters = {
         'status': request.GET.get('status', 'new'),
@@ -327,13 +327,14 @@ def agent_dashboard(request):
         'first_name': request.GET.get('first_name', ''),
         'email': request.GET.get('email', ''),
         'type': request.GET.get('type', 'CL'),
-    }
+        'type' : input_type
 
-    print()
+    }
 
     context = {
         'report_types': REPORT_TYPES,
         'filters' : filters
+
     }
     entries = None
     match input_type:
@@ -410,24 +411,22 @@ def update_status(request):
 
 #(shows ClaimModel details)-----------------------------------------------------------------------
 @login_required
-def entry_detail(request, id):
+def entry_detail(request, id, _type):
     activate(request.session["language"])
 
     entry = None
-    if request.user.person.department == None:
-        entry = ClaimModel.objects.get(id=id)
-    else:
-        match request.user.person.department.reclamationType:
-            case 'CL':
-                entry = ClaimModel.objects.get(id=id)
-            case 'CM':
-                entry = CommunicationModel.objects.get(id=id)
-            case 'TR':
-                entry = TransportModel.objects.get(id=id)
-            case 'VP':
-                entry = PreparationModel.objects.get(id=id)
-            case 'OT':
-                entry = OtherModel.objects.get(id=id)
+
+    match _type:
+        case 'CL':
+            entry = ClaimModel.objects.get(id=id)
+        case 'CM':
+            entry = CommunicationModel.objects.get(id=id)
+        case 'TR':
+            entry = TransportModel.objects.get(id=id)
+        case 'VP':
+            entry = PreparationModel.objects.get(id=id)
+        case 'OT':
+            entry = OtherModel.objects.get(id=id)
 
     if request.method == "POST":
         if "export" in request.POST:
@@ -514,11 +513,11 @@ def send_claim_email_to_agent(complaint, agent_email):
     subject = "New Claim Submission"
     message = f"""
     A new complaint has been submitted with the following details:
-    
+
     - Complaint id: {complaint.id}
     - Submission Date: {complaint.date}
     - Message: {complaint.message}
-    
+
     Please review the claim and take appropriate action.
     """
 
