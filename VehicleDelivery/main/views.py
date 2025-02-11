@@ -13,6 +13,7 @@ from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
 from .export import export_single_object, download_all_files
+from .logging import get_complaint_type
 
 
 
@@ -330,15 +331,26 @@ def update_status(request):
         if selected_entries and new_status:
             match request.user.person.department.reclamationType:
                 case 'CL':
-                    ClaimModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = ClaimModel.objects.filter(id__in=selected_entries)
                 case 'CM':
-                    CommunicationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = CommunicationModel.objects.filter(id__in=selected_entries)
                 case 'TR':
-                    TransportModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = TransportModel.objects.filter(id__in=selected_entries)
                 case 'VP':
-                    PreparationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = PreparationModel.objects.filter(id__in=selected_entries)
                 case 'OT':
-                    OtherModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = OtherModel.objects.filter(id__in=selected_entries)
+
+            
+            ActionLog(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.get().__class__),
+                target_id=1,
+                action="status update",
+                original_value=complaint.get().status,
+                new_value=new_status
+            ).save()
+            complaint.update(status=new_status)
 
             return JsonResponse({'status': 'success', 'message': 'Status updated successfully'})
 
