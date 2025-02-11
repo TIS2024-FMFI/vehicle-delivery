@@ -281,17 +281,13 @@ class PreparationModel(models.Model):
 class ActionLog(models.Model):
     timestamp = models.DateTimeField(default=now)
     user = models.ForeignKey(Person, on_delete=models.SET_NULL, blank=True, null=True, related_name="user_set")
-    target_user = models.ForeignKey(Person, on_delete=models.SET_NULL, blank=True, null=True, related_name="target_user_set")
-    target_complaint_type = models.CharField(max_length=100, blank=True, null=True)
-    target_complaint_id = models.PositiveIntegerField(blank=True, null=True)
+    target_type = models.CharField(max_length=30)
+    target_id = models.PositiveIntegerField()
     action = models.CharField(max_length=100)
     original_value = models.CharField(max_length=100, blank=True, null=True)
     new_value = models.CharField(max_length=100, blank=True, null=True)
 
-    def log(user, target_user, target_complaint_type, target_complaint_id, action, original_value, new_value):
-        ...
-
-# user creation             user, target_u, action, newW
+# user creation
 # user password change
 # user department change
 # department creation

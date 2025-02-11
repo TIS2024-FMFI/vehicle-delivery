@@ -6,9 +6,10 @@ from django.db.models import FileField, ImageField, DateField
 from main.models import *
 import zipfile
 import os
-from VehicleDelivery.settings import LOGGING
+from main.logging import get_complaint_type
+#from VehicleDelivery.settings import LOGGING
 
-logger = LOGGING.getLogger("logger")
+#logger = LOGGING.getLogger("logger")
 
 
 def export_single_object(request, obj_id, model):
@@ -65,8 +66,14 @@ def export_single_object(request, obj_id, model):
 
     workbook.save(response)
 
-    logger.info(f"User {request.user} is downloading files for object {obj_id}")
-    logger.debug(f"User {request.user} is downloading files for object {obj_id}")
+    ActionLog(
+        user=request.user.person,
+        target_type=get_complaint_type(model),
+        target_id=obj_id,
+        action="export",
+    ).save()
+    
+
     return response
 
 

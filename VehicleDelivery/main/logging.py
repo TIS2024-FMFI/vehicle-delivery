@@ -1,5 +1,6 @@
 import os
 from VehicleDelivery.settings import BASE_DIR
+from main.models import *
 
 LOGGING = {
     "version": 1,
@@ -41,3 +42,22 @@ LOGGING = {
         },
     },
 }
+
+    
+def get_complaint_type(type):
+    if type is ClaimModel:
+        type_processed = "Claim"
+    elif type is TransportModel:
+        type_processed = "Transport"
+    elif type is PreparationModel:
+        type_processed = "Preparation"
+    elif type is CommunicationModel:
+        type_processed = "Communication"
+    elif type is OtherModel:
+        type_processed = "Other"
+    elif type is Person:
+        type_processed = "Person"
+    else:
+        type_processed = "_"
+
+    return type_processed
