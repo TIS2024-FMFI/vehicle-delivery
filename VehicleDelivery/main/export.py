@@ -104,4 +104,11 @@ def download_all_files(request, obj_id, model):
             if os.path.exists(file_path):
                 zip_file.write(file_path, f"{obj_id}_{os.path.basename(file_path)}")
 
+    ActionLog(
+        user=request.user.person,
+        target_type=get_complaint_type(model),
+        target_id=obj_id,
+        action="download files",
+    ).save()
+
     return response

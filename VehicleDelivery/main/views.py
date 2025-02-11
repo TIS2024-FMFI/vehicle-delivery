@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.forms.models import model_to_dict
 import json
 from .forms import *
 from .models import *
@@ -36,15 +37,70 @@ def home(request):
 @admin_required
 def form_department(request, id):
     activate(request.session["language"])
-    department_instance = Department.objects.get(id=id)
+
+    # Create a new department if ID is 0
+    if id == 0:
+        if request.method == 'POST' and request.POST.get('save'):
+            department_instance = Department.objects.create()
+            form = DepartmentForm(request.POST, instance=department_instance)
+
+            if form.is_valid():
+                form.save()
+                ActionLog.objects.create(
+                    user=request.user.person,
+                    target_type=get_complaint_type(Department),
+                    target_id=department_instance.id,
+                    action="create",
+                    new_value=department_instance.name
+                )
+                return redirect('/departments/')
+        
+        return render(request, "departments/department_form.html", {'form': DepartmentForm()})
+
+    # Fetch existing department
+    department_instance = get_object_or_404(Department, id=id)
+
     if request.method == 'POST':
         if request.POST.get('delete'):
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Department),
+                target_id=id,
+                action="delete",
+                original_value=department_instance.name
+            )
             department_instance.delete()
             return redirect('/departments/')
+        
+        # Track changes before saving
+        old_values = model_to_dict(department_instance)
         form = DepartmentForm(request.POST, instance=department_instance)
+
         if form.is_valid():
+            new_values = form.cleaned_data
             form.save()
+
+            # Log only changed fields
+            excluded_fields = {"id", "created_at"}
+            for field in old_values:
+                if field in excluded_fields:
+                    continue
+                
+                old_value = old_values[field]
+                new_value = new_values.get(field)
+
+                if old_value != new_value:
+                    ActionLog.objects.create(
+                        user=request.user.person,
+                        target_type=get_complaint_type(Department),
+                        target_id=id,
+                        action=f"update_{field}",
+                        original_value=str(old_value) if old_value is not None else "",
+                        new_value=str(new_value) if new_value is not None else ""
+                    )
+
             return redirect('/departments/')
+    
     else:
         form = DepartmentForm(instance=department_instance)
 
@@ -132,12 +188,10 @@ def departments(request):
     activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('add'):
-            department = Department()
-            department.save()
+            return redirect('/form_department/0/')
         elif request.POST.get('department'):
             department = Department.objects.get(id=request.POST.get('department'))
-
-        return redirect(f'/form_department/{department.id}/')
+            return redirect(f'/form_department/{department.id}/')
 
     departments = Department.objects.all().order_by('name')
 
@@ -345,7 +399,7 @@ def update_status(request):
             ActionLog(
                 user=request.user.person,
                 target_type=get_complaint_type(complaint.get().__class__),
-                target_id=1,
+                target_id=complaint.get().id,
                 action="status update",
                 original_value=complaint.get().status,
                 new_value=new_status

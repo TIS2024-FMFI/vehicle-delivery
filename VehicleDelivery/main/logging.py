@@ -57,6 +57,8 @@ def get_complaint_type(type):
         type_processed = "Other"
     elif type is Person:
         type_processed = "Person"
+    elif type is Department:
+        type_processed = "Department"
     else:
         type_processed = "_"
 
