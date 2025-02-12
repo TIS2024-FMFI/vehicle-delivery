@@ -41,25 +41,6 @@ def home(request):
 def form_update_department(request, id):
     activate(request.session["language"])
 
-    # Create a new department if ID is 0
-    if id == 0:
-        if request.method == 'POST' and request.POST.get('save'):
-            department_instance = Department.objects.create()
-            form = DepartmentForm(request.POST, instance=department_instance)
-
-            if form.is_valid():
-                form.save()
-                ActionLog.objects.create(
-                    user=request.user.person,
-                    target_type=get_complaint_type(Department),
-                    target_id=department_instance.id,
-                    action="create",
-                    new_value=department_instance.name
-                )
-                return redirect('/departments/')
-        
-        return render(request, "departments/department_form.html", {'form': DepartmentForm()})
-
     # Fetch existing department
     department_instance = get_object_or_404(Department, id=id)
 
@@ -115,8 +96,16 @@ def form_create_department(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
+        
         if form.is_valid():
-            form.save()
+            department_instance = form.save()
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Department),
+                target_id=department_instance.id,
+                action="create",
+                new_value=department_instance.name
+            )
             return redirect('/departments/')
     else:
         form = DepartmentForm()
