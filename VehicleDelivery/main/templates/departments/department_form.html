@@ -33,12 +33,19 @@
         <div class="form-group">
             {{ form.as_p }}
         </div>
+        {% if creating_new %}
+        <button type="submit" name="save" value="save" class="primary-button">{% trans "Create" %}</button>
+        {% else %}
         <button type="submit" name="save" value="save" class="primary-button">{% trans "Save" %}</button>
+        {% endif %}
+
     </form>
 
     <form method="post" class="delete-form">
         {% csrf_token %}
+        {% if not creating_new %}
         <button type="submit" name="delete" value="delete" class="danger-button">{% trans "Delete" %}</button>
+        {% endif %}
     </form>
 </div>
 

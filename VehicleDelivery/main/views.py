@@ -13,6 +13,9 @@ from django.utils.translation import activate
 from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import ClaimModel, Person
 from .export import export_single_object, download_all_files
 from .logging import get_complaint_type
 
@@ -35,7 +38,7 @@ def home(request):
     return render(request, "home.html")
 
 @admin_required
-def form_department(request, id):
+def form_update_department(request, id):
     activate(request.session["language"])
 
     # Create a new department if ID is 0
@@ -104,7 +107,21 @@ def form_department(request, id):
     else:
         form = DepartmentForm(instance=department_instance)
 
-    return render(request, "departments/department_form.html", {'form': form})
+    return render(request, "departments/department_form.html", {'form': form,
+                                                                'creating_new': False})
+
+@admin_required
+def form_create_department(request):
+    activate(request.session["language"])
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/departments/')
+    else:
+        form = DepartmentForm()
+    return render(request, "departments/department_form.html", {'form': form,
+                                                                'creating_new': True})
 
 @admin_required
 def form_create_person(request):
@@ -222,9 +239,9 @@ def users(request):
     activate(request.session["language"])
     if request.method == 'POST':
         if request.POST.get('passwd'):
-            return redirect(f'/change_passwd/{request.POST.get('passwd')}/')
+            return redirect(f"/change_passwd/{request.POST.get('passwd')}/")
         elif request.POST.get('update'):
-            return redirect(f'/update_person/{request.POST.get('update')}/')
+            return redirect(f"/update_person/{request.POST.get('update')}/")
 
 
     users = User.objects.all().exclude(id=request.user.id).order_by('username')
@@ -260,19 +277,16 @@ def departments(request):
     return render(request, "departments/departments.html", {'departments': departments, 'search' : search_query})
 
 
-
 def switch_language(request, language_code):
     activate(language_code)
     request.session["language"] = language_code
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
-
-
-
 def form_all(request):
     activate(request.session["language"])
     return render(request, "forms.html")
+
 
 def form_claim(request):
     activate(request.session["language"])
@@ -282,6 +296,13 @@ def form_claim(request):
             form.status = 'new'
             complaint = form.save()
 
+            mail_send(complaint, 'CL')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='CL')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(complaint, department.email)
+
             ActionLog.objects.create(
                 user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
@@ -289,12 +310,12 @@ def form_claim(request):
                 action=f"complaint_import",
                 new_value=complaint.firm_name
             )
-            
             return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
 
     return render(request, "form_claim.html", {'form': form})
+
 
 def form_communication(request):
     activate(request.session["language"])
@@ -304,6 +325,13 @@ def form_communication(request):
             form.status = 'new'
             complaint = form.save()
 
+            mail_send(complaint, 'CM')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='CM')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(complaint, department.email)
+
             ActionLog.objects.create(
                 user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
@@ -311,12 +339,12 @@ def form_communication(request):
                 action=f"complaint_import",
                 new_value=complaint.firm_name
             )
-            
             return HttpResponseRedirect('/thanks/')
     else:
         form = CommunicationForm()
 
     return render(request, "form_communication.html", {'form': form})
+
 
 def form_other(request):
     activate(request.session["language"])
@@ -325,6 +353,13 @@ def form_other(request):
         if form.is_valid():
             form.status = 'new'
             complaint = form.save()
+
+            mail_send(complaint, 'OT')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='OT')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
                 user=request.user.person,
@@ -339,6 +374,7 @@ def form_other(request):
 
     return render(request, "form_other.html", {'form': form})
 
+
 def form_transport(request):
     activate(request.session["language"])
     if request.method == 'POST':
@@ -346,6 +382,13 @@ def form_transport(request):
         if form.is_valid():
             form.status = 'new'
             complaint = form.save()
+
+            mail_send(complaint, 'TR')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='TR')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
                 user=request.user.person,
@@ -360,6 +403,7 @@ def form_transport(request):
 
     return render(request, "form_transport.html", {'form': form})
 
+
 def form_preparation(request):
     activate(request.session["language"])
     if request.method == 'POST':
@@ -367,6 +411,13 @@ def form_preparation(request):
         if form.is_valid():
             form.status = 'new'
             complaint = form.save()
+
+            mail_send(complaint, 'VP')  # send mail to customer
+
+            departments = Department.objects.filter(reclamationType='VP')
+            for department in departments:
+                if department.email:
+                    send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
                 user=request.user.person,
@@ -381,11 +432,13 @@ def form_preparation(request):
 
     return render(request, "form_preparation.html", {'form': form})
 
+
 def thanks(request):
     activate(request.session["language"])
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
+
 @login_required
 def agent_dashboard(request):
     activate(request.session["language"])
@@ -396,11 +449,17 @@ def agent_dashboard(request):
     input_vin = request.GET.get('vin', '')
     input_name = request.GET.get('first_name', '')
     input_email = request.GET.get('email', '')
+    input_type = request.GET.get('type', '')
 
-    input_type = "CL"
-    if request.user.person.department != None:
-        if request.user.person.department.reclamationType:
-            input_type = request.user.person.department.reclamationType
+
+    if (input_type == ''):
+        if request.user.person.department != None:
+            if request.user.person.department.reclamationType:
+                input_type = request.user.person.department.reclamationType # normal agent
+            else:
+                input_type = "CL" #something went wrong
+        else:
+            input_type = "CL" #admin
 
 
 
@@ -413,11 +472,14 @@ def agent_dashboard(request):
         'first_name': request.GET.get('first_name', ''),
         'email': request.GET.get('email', ''),
         'type': request.GET.get('type', 'CL'),
+        'type' : input_type
+
     }
 
     context = {
         'report_types': REPORT_TYPES,
         'filters' : filters
+
     }
     entries = None
     match input_type:
@@ -504,24 +566,22 @@ def update_status(request):
 
 #(shows ClaimModel details)-----------------------------------------------------------------------
 @login_required
-def entry_detail(request, id):
+def entry_detail(request, id, _type):
     activate(request.session["language"])
 
     entry = None
-    if request.user.person.department == None:
-        entry = ClaimModel.objects.get(id=id)
-    else:
-        match request.user.person.department.reclamationType:
-            case 'CL':
-                entry = ClaimModel.objects.get(id=id)
-            case 'CM':
-                entry = CommunicationModel.objects.get(id=id)
-            case 'TR':
-                entry = TransportModel.objects.get(id=id)
-            case 'VP':
-                entry = PreparationModel.objects.get(id=id)
-            case 'OT':
-                entry = OtherModel.objects.get(id=id)
+
+    match _type:
+        case 'CL':
+            entry = ClaimModel.objects.get(id=id)
+        case 'CM':
+            entry = CommunicationModel.objects.get(id=id)
+        case 'TR':
+            entry = TransportModel.objects.get(id=id)
+        case 'VP':
+            entry = PreparationModel.objects.get(id=id)
+        case 'OT':
+            entry = OtherModel.objects.get(id=id)
 
     if request.method == "POST":
         if "export" in request.POST:
@@ -536,7 +596,93 @@ def statistics(request):
     activate(request.session["language"])
     return render(request, "statistics.html")
 
+def form_claim_next(request):
+    if request.methid == 'POST':
+        form = ClaimForm(request.POST, request.FILES)
+        if form.is_valid():
+            complaint = form.save()
+            mail_send(complaint)
 
+            return HttpResponse("Claim submitted successfully, notification sent")
+        else:
+            form = ClaimForm()
+        return render(request, "thank.html", {'form': form})
+
+def mail_send(claim, complaint_type):
+    complaint = None
+    match complaint_type:
+        case 'CL':
+            try:
+                complaint = ClaimModel.objects.get(pk=claim.id)
+            except ClaimModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'CM':
+            try:
+                complaint = CommunicationModel.objects.get(pk=claim.id)
+            except CommunicationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'TR':
+            try:
+                complaint = TransportModel.objects.get(pk=claim.id)
+            except TransportModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'VP':
+            try:
+                complaint = PreparationModel.objects.get(pk=claim.id)
+            except PreparationModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+        case 'OT':
+            try:
+                complaint = OtherModel.objects.get(pk=claim.id)
+            except OtherModel.DoesNotExist:
+                return HttpResponse("Complaint not found.", status=404)
+
+    subject = "Complaint Submitted Successfully"
+    message = f"""
+    Dear {complaint.first_name} {complaint.second_name},
+
+    Thank you for submitting your complaint with us. Here are the details of your submission:
+
+    - Submission Date: {complaint.date}
+    - Message: {complaint.message}
+
+    Our team will review your complaint and contact you soon.
+
+    Best regards,
+    CEVA Logistic
+    """
+    recipient = complaint.email
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,  # sender
+        [recipient],
+        fail_silently=False,
+    )
+
+    return HttpResponse("Email notification sent successfully.")
+
+
+def send_claim_email_to_agent(complaint, agent_email):
+    subject = "New Claim Submission"
+    message = f"""
+    A new complaint has been submitted with the following details:
+
+    - Complaint id: {complaint.id}
+    - Submission Date: {complaint.date}
+    - Message: {complaint.message}
+
+    Please review the claim and take appropriate action.
+    """
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,  # Sender's email
+        [agent_email],  # Agent's email
+        fail_silently=False,
+    )
 
 
 def no_access(request):

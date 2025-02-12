@@ -7,7 +7,8 @@ urlpatterns = [
     path("form_claim/", views.form_claim, name="form_claim"),
     path("forms/", views.form_all, name="form_all"),
     path("departments/", views.departments, name="departments"),
-    path("form_department/<int:id>/", views.form_department, name="form_department"),
+    path("form_department/<int:id>/", views.form_update_department, name="form_department"),
+    path("create_department/", views.form_create_department, name="create_department"),
     path("create_person/", views.form_create_person, name="create_person"),
     path("users/", views.users, name="users"),
     path("change_passwd/<int:id>/", views.form_change_person_passwd, name="change_passwd"),
@@ -18,10 +19,8 @@ urlpatterns = [
     path("form_other/", views.form_other, name="form_other"),
     path("no_access/", views.no_access, name="no_access"),
     path("agent_dashboard/", views.agent_dashboard, name="agent_dashboard"),
-    path("entry_detail/<int:id>/", views.entry_detail, name="entry_detail"),
+    path("entry_detail/<int:id>/<str:_type>", views.entry_detail, name="entry_detail"),
     path('update_status/', views.update_status, name='update_status'),
     path('switch-language/<str:language_code>/', views.switch_language, name='switch_language'),
     path("statistics", views.statistics, name="statistics")
-
-
 ]
