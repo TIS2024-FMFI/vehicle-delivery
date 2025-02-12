@@ -109,13 +109,25 @@ def form_department(request, id):
 @admin_required
 def form_create_person(request):
     activate(request.session["language"])
+    
     if request.method == 'POST':
         form = PersonForm(request.POST)
+        
         if form.is_valid():
-            form.save()
+            person_instance = form.save()  # Save and get the new instance
+            
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=person_instance.id,
+                action="create",
+                new_value=person_instance.username
+            )
             return redirect('/users/')
+    
     else:
         form = PersonForm()
+
     return render(request, "registration/create_user.html", {'form': form})
 
 @admin_required
@@ -128,6 +140,14 @@ def form_change_person_passwd(request, id):
         if form.is_valid() and form.cleaned_data['password1'] == form.cleaned_data['password2']:
             user.set_password(form.cleaned_data['password1'])
             user.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=id,
+                action="admin_password_change"
+            )
+
             return redirect('/users/')
         else:
             message = "Passwords do not match"
@@ -139,23 +159,62 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
-    if (request.user.id == id):
+    if request.user.id == id:
         return redirect('/users/')
+
     activate(request.session["language"])
-    user = User.objects.get(id=id)
+    user = get_object_or_404(User, id=id)
+    
     if request.method == 'POST':
+        # Handle delete
         if request.POST.get('delete'):
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=user.person.id,
+                action="delete",
+                original_value=user.username
+            )
             user.delete()
             return redirect('/users/')
+
+        # Handle update
         if request.POST.get('save'):
-            form = UpdatePersonForm(request.POST, instance=user.person)
+            person_instance = user.person
+            old_values = model_to_dict(person_instance)  # Get old values
+            old_values['username'] = person_instance.user.username
+            form = UpdatePersonForm(request.POST, instance=person_instance)
+
             if form.is_valid():
+                new_values = form.cleaned_data  # Get new field values
+                print(old_values, new_values)
                 form.save()
+
+                # Log only changed fields
+                excluded_fields = {"id", "created_at", "user"}
+                for field in old_values:
+                    if field in excluded_fields:
+                        continue
+                    
+                    old_value = old_values.get(field)
+                    new_value = new_values.get(field)
+
+                    if old_value != new_value:  # Only log changes
+                        ActionLog.objects.create(
+                            user=request.user.person,
+                            target_type=get_complaint_type(Person),
+                            target_id=person_instance.id,
+                            action=f"update_{field}",
+                            original_value=str(old_value) if old_value is not None else "",
+                            new_value=str(new_value) if new_value is not None else ""
+                        )
+
                 return redirect('/users/')
+    
     else:
         form = UpdatePersonForm(instance=user.person)
-    return render(request, "registration/update_person.html", {'form': form,
-                                                               "user": user,})
+
+    return render(request, "registration/update_person.html", {'form': form, "user": user})
 
 @admin_required
 def users(request):
@@ -400,7 +459,7 @@ def update_status(request):
                 user=request.user.person,
                 target_type=get_complaint_type(complaint.get().__class__),
                 target_id=complaint.get().id,
-                action="status update",
+                action="status_update",
                 original_value=complaint.get().status,
                 new_value=new_status
             ).save()
