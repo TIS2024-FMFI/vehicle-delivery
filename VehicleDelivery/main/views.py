@@ -187,7 +187,6 @@ def form_update_person(request, id):
 
             if form.is_valid():
                 new_values = form.cleaned_data  # Get new field values
-                print(old_values, new_values)
                 form.save()
 
                 # Log only changed fields
@@ -281,7 +280,16 @@ def form_claim(request):
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
             form.status = 'new'
-            form.save()
+            complaint = form.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
+            
             return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
@@ -294,7 +302,16 @@ def form_communication(request):
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
             form.status = 'new'
-            form.save()
+            complaint = form.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
+            
             return HttpResponseRedirect('/thanks/')
     else:
         form = CommunicationForm()
@@ -307,12 +324,19 @@ def form_other(request):
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
             form.status = 'new'
-            form.save()
+            complaint = form.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = OtherForm()
 
-    print(form.errors)
     return render(request, "form_other.html", {'form': form})
 
 def form_transport(request):
@@ -321,7 +345,15 @@ def form_transport(request):
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
             form.status = 'new'
-            form.save()
+            complaint = form.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = TransportForm()
@@ -334,7 +366,15 @@ def form_preparation(request):
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
             form.status = 'new'
-            form.save()
+            complaint = form.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = PreparationForm()
@@ -357,12 +397,6 @@ def agent_dashboard(request):
     input_name = request.GET.get('first_name', '')
     input_email = request.GET.get('email', '')
 
-
-    print(input_status)
-    print(input_name)
-    print(input_id)
-
-
     input_type = "CL"
     if request.user.person.department != None:
         if request.user.person.department.reclamationType:
@@ -380,8 +414,6 @@ def agent_dashboard(request):
         'email': request.GET.get('email', ''),
         'type': request.GET.get('type', 'CL'),
     }
-
-    print()
 
     context = {
         'report_types': REPORT_TYPES,
@@ -428,7 +460,6 @@ def agent_dashboard(request):
 
 @login_required
 def update_status(request):
-    #print("Som tu----------------------------------------------------")
     if request.method == "POST":
         # Parse the received data
         new_status = request.POST.get('new_status')
