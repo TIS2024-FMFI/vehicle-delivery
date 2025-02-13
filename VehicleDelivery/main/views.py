@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
@@ -14,6 +15,7 @@ from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.conf import settings
 from .models import ClaimModel, Person
 from .export import export_single_object, download_all_files
@@ -24,8 +26,13 @@ from .logging import get_complaint_type
 
 #Create your views here.
 
-def no_access(request):
+def set_language(request):
+    if "language" not in request.session:
+        request.session["language"] = 'en'
     activate(request.session["language"])
+
+def no_access(request):
+    set_language(request)
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
 def hello_world(request):
@@ -34,12 +41,12 @@ def hello_world(request):
 def home(request):
     if "language" not in request.session:
         request.session["language"] = 'en'
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "home.html")
 
 @admin_required
 def form_update_department(request, id):
-    activate(request.session["language"])
+    set_language(request)
 
     # Fetch existing department
     department_instance = get_object_or_404(Department, id=id)
@@ -93,7 +100,7 @@ def form_update_department(request, id):
 
 @admin_required
 def form_create_department(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
         
@@ -114,7 +121,7 @@ def form_create_department(request):
 
 @admin_required
 def form_create_person(request):
-    activate(request.session["language"])
+    set_language(request)
     
     if request.method == 'POST':
         form = PersonForm(request.POST)
@@ -138,7 +145,7 @@ def form_create_person(request):
 
 @admin_required
 def form_change_person_passwd(request, id):
-    activate(request.session["language"])
+    set_language(request)
     user = User.objects.get(id=id)
     message = None
     if request.method == 'POST':
@@ -168,7 +175,7 @@ def form_update_person(request, id):
     if request.user.id == id:
         return redirect('/users/')
 
-    activate(request.session["language"])
+    set_language(request)
     user = get_object_or_404(User, id=id)
     
     if request.method == 'POST':
@@ -225,7 +232,7 @@ def form_update_person(request, id):
 def users(request):
     search_query = request.GET.get('search', '')
 
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         if request.POST.get('passwd'):
             return redirect(f"/change_passwd/{request.POST.get('passwd')}/")
@@ -249,7 +256,7 @@ def users(request):
 def departments(request):
     search_query = request.GET.get('search', '')
 
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         if request.POST.get('add'):
             return redirect('/form_department/0/')
@@ -273,12 +280,12 @@ def switch_language(request, language_code):
 
 
 def form_all(request):
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "forms.html")
 
 
 def form_claim(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
@@ -293,7 +300,6 @@ def form_claim(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -307,7 +313,7 @@ def form_claim(request):
 
 
 def form_communication(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -322,7 +328,6 @@ def form_communication(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -336,7 +341,7 @@ def form_communication(request):
 
 
 def form_other(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
@@ -351,7 +356,6 @@ def form_other(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -365,7 +369,7 @@ def form_other(request):
 
 
 def form_transport(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -380,7 +384,6 @@ def form_transport(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -394,7 +397,7 @@ def form_transport(request):
 
 
 def form_preparation(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -409,7 +412,6 @@ def form_preparation(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -423,14 +425,14 @@ def form_preparation(request):
 
 
 def thanks(request):
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
 
 @login_required
 def agent_dashboard(request):
-    activate(request.session["language"])
+    set_language(request)
     input_status = request.GET.get('status', 'new')
     input_date_from = request.GET.get('date_from', '')
     input_date_to = request.GET.get('date_to', '')
@@ -556,7 +558,7 @@ def update_status(request):
 #(shows ClaimModel details)-----------------------------------------------------------------------
 @login_required
 def entry_detail(request, id, _type):
-    activate(request.session["language"])
+    set_language(request)
 
     entry = None
 
@@ -582,8 +584,149 @@ def entry_detail(request, id, _type):
 
 @login_required
 def statistics(request):
-    activate(request.session["language"])
-    return render(request, "statistics.html")
+    set_language(request)
+
+    # Get start_date and end_date from the GET request
+    start_date_str = request.GET.get("start_date", "")
+    end_date_str = request.GET.get("end_date", "")
+
+    # Convert to datetime objects if the dates are provided
+    if start_date_str and end_date_str:
+        start_date = start_date_str
+        end_date = end_date_str
+    else:
+        start_date = now()
+        end_date = now()
+
+    # Count imports by type (filter by date if provided)
+    imports_by_type = (
+        ActionLog.objects.filter(action="complaint_import")
+        .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+        .values("target_type")
+        .annotate(count=Count("id"))
+        .order_by("target_type")
+    )
+
+    # Count status changes (filter by date if provided)
+    status_changes = (
+        ActionLog.objects.filter(action__startswith="status_update")
+        .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+        .values("target_type", "new_value")
+        .annotate(count=Count("id"))
+        .order_by("target_type", "new_value")
+    )
+
+    NATURE_OF_DAMAGE_DICT = dict(NATURE_OF_DAMAGE)
+    PLACE_OF_DAMAGE_DICT = dict(PLACE_OF_DAMAGE)
+
+    # Nature of damage counts (filter by ActionLogs within the date range)
+    raw_nature_of_damage_counts = (
+        ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                  .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                  .values("target_id"))
+        .exclude(nature_of_damage_1="XX")
+        .values("nature_of_damage_1")
+        .annotate(count=Count("nature_of_damage_1"))
+        .union(
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(nature_of_damage_2="XX")
+            .values("nature_of_damage_2")
+            .annotate(count=Count("nature_of_damage_2"))
+        )
+        .union(
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(nature_of_damage_3="XX")
+            .values("nature_of_damage_3")
+            .annotate(count=Count("nature_of_damage_3"))
+        )
+        .order_by("-count")
+    )
+
+    # Place of damage counts (filter by ActionLogs within the date range)
+    raw_place_of_damage_counts = (
+        ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                  .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                  .values("target_id"))
+        .exclude(place_of_damage_1="00")
+        .values("place_of_damage_1")
+        .annotate(count=Count("place_of_damage_1"))
+        .union(
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(place_of_damage_2="00")
+            .values("place_of_damage_2")
+            .annotate(count=Count("place_of_damage_2"))
+        )
+        .union(
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(place_of_damage_3="00")
+            .values("place_of_damage_3")
+            .annotate(count=Count("place_of_damage_3"))
+        )
+        .order_by("-count")
+    )
+
+    # Total counts for percentages
+    total_nature_count = sum(entry["count"] for entry in raw_nature_of_damage_counts)
+    total_place_count = sum(entry["count"] for entry in raw_place_of_damage_counts)
+    total_imports = sum(entry["count"] for entry in imports_by_type)
+    total_status_changes = sum(entry["count"] for entry in status_changes)
+
+    # Convert damage codes to readable names and add percentages
+    nature_of_damage_counts = [
+        {
+            "code": entry["nature_of_damage_1"] or entry["nature_of_damage_2"] or entry["nature_of_damage_3"],
+            "name": NATURE_OF_DAMAGE_DICT.get(entry["nature_of_damage_1"] or entry["nature_of_damage_2"] or entry["nature_of_damage_3"], "Unknown"),
+            "count": entry["count"],
+            "percentage": round((entry["count"] / total_nature_count) * 100, 2) if total_nature_count else 0,
+        }
+        for entry in raw_nature_of_damage_counts
+    ]
+
+    place_of_damage_counts = [
+        {
+            "code": entry["place_of_damage_1"] or entry["place_of_damage_2"] or entry["place_of_damage_3"],
+            "name": PLACE_OF_DAMAGE_DICT.get(entry["place_of_damage_1"] or entry["place_of_damage_2"] or entry["place_of_damage_3"], "Unknown"),
+            "count": entry["count"],
+            "percentage": round((entry["count"] / total_place_count) * 100, 2) if total_place_count else 0,
+        }
+        for entry in raw_place_of_damage_counts
+    ]
+
+    # Add percentage to imports and status changes
+    imports_by_type = [
+        {
+            **entry,
+            "percentage": round((entry["count"] / total_imports) * 100, 2) if total_imports else 0,
+        }
+        for entry in imports_by_type
+    ]
+
+    status_changes = [
+        {
+            **entry,
+            "percentage": round((entry["count"] / total_status_changes) * 100, 2) if total_status_changes else 0,
+        }
+        for entry in status_changes
+    ]
+
+    context = {
+        "imports_per_month": imports_by_type,
+        "status_changes": status_changes,
+        "nature_of_damage_counts": nature_of_damage_counts,
+        "place_of_damage_counts": place_of_damage_counts,
+    }
+
+    return render(request, "statistics.html", context)
+
+
 
 def form_claim_next(request):
     if request.methid == 'POST':
@@ -701,6 +844,59 @@ def send_claim_email_to_agent(complaint, agent_email):
 def no_access(request):
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
-def thanks(request):
-    return render(request, "thank.html")
 
+def logs(request):
+    set_language(request)
+    input_date_from = request.GET.get('date_from', '')
+    input_date_to = request.GET.get('date_to', '')
+    input_id = request.GET.get('id', '')
+    input_user = request.GET.get('user', '')
+    input_target_type = request.GET.get('target_type', '')
+    input_target_id = request.GET.get('target_id', '')
+    input_action = request.GET.get('action', '')
+
+
+
+    filters = {
+        'date_from': request.GET.get('date_from', ''),
+        'date_to': request.GET.get('date_to', ''),
+        'id': request.GET.get('id', ''),
+        'user': request.GET.get('user', ''),
+        'target_type': request.GET.get('target_type', ''),
+        'target_id': request.GET.get('target_id', ''),
+        'action': request.GET.get('action', '')
+    }
+    entries = ActionLog.objects.all().order_by('-id')
+
+    if input_date_from:
+        entries = entries.filter(timestamp__gte=input_date_from)
+    if input_date_to:
+        entries = entries.filter(timestamp__lte=input_date_to)
+    if input_id:
+        entries = entries.filter(id__icontains=input_id)
+    if input_user:
+        user_ids = User.objects.filter(
+            Q(username__icontains=input_user) | 
+            Q(first_name__icontains=input_user) | 
+            Q(last_name__icontains=input_user)
+        ).values_list('id', flat=True)  # Get matching user IDs
+
+        entries = entries.filter(user_id__in=user_ids) 
+    if input_target_type:
+        entries = entries.filter(target_type__icontains=input_target_type)
+    if input_target_id:
+        entries = entries.filter(target_id__icontains=input_target_id)
+    if input_action:
+        entries = entries.filter(action__icontains=input_action)
+
+    paginator = Paginator(entries, 100)  # Show 50 entries per page
+    page_number = request.GET.get('page', 1)  # Get current page, default to 1
+    page_obj = paginator.get_page(page_number)  # Get the page object
+
+    context = {
+        'report_types': REPORT_TYPES,
+        'filters' : filters,
+        'entries' : page_obj
+    }
+
+    return render(request, "logs.html", context)

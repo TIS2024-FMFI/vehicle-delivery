@@ -1,0 +1,133 @@
+{% extends "base_agent.html" %}
+{% block title %}Departments List{% endblock %}
+{% load i18n %}
+
+{% block content %}
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <form method="get" class="filter-form">
+                <h3>{% trans "Logs" %}</h3>
+
+                <!-- Date From -->
+                <div class="filter-item">
+                    <label for="date_from">{% trans "Date from" %}</label>
+                    <input type="date" id="date_from" name="date_from" value="{{ filters.date_from }}">
+                </div>
+
+                <!-- Date To -->
+                <div class="filter-item">
+                    <label for="date_to">{% trans "Date to" %}</label>
+                    <input type="date" id="date_to" name="date_to" value="{{ filters.date_to }}">
+                </div>
+
+                <!-- ID -->
+                <div class="filter-item">
+                    <label for="id">ID</label>
+                    <input type="text" id="id" name="id" value="{{ filters.id }}">
+                </div>
+
+                <!-- user -->
+                <div class="filter-item">
+                   <label for="user">User</label>
+                    <input type="text" id="user" name="user" value="{{ filters.user }}">
+                </div>
+
+                <!-- target_type -->
+                <div class="filter-item">
+                    <label for="first_name">Target Type</label>
+                    <input type="text" id="target_type" name="target_type" value="{{ filters.target_type}}">
+                </div>
+
+                <!-- target_id -->
+                <div class="filter-item">
+                    <label for="target_id">Target ID</label>
+                    <input type="text" id="target_id" name="target_id" value="{{ filters.target_id }}">
+                </div>
+
+                <!-- Action -->
+                <div class="filter-item">
+                    <label for="action">Action</label>
+                    <input type="text" id="action" name="action" value="{{ filters.action }}">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="filter-button">{% trans "Filter" %}</button>
+
+                <!-- Clear Filters -->
+                <a href="{% url 'logs' %}" class="clear-button">{% trans "Clear Filters" %}</a>
+            </form>
+
+            <div class="pagination">
+                <span class="step-links">
+                    {% if entries.has_previous %}
+                        <a href="?page=1{% if filters %}&{{ filters|urlencode }}{% endif %}">&laquo; First</a>
+                        <a href="?page={{ entries.previous_page_number }}{% if filters %}&{{ filters|urlencode }}{% endif %}">Previous</a>
+                    {% endif %}
+            
+                    <span class="current-page">
+                        Page {{ entries.number }} of {{ entries.paginator.num_pages }}.
+                    </span>
+            
+                    {% if entries.has_next %}
+                        <a href="?page={{ entries.next_page_number }}{% if filters %}&{{ filters|urlencode }}{% endif %}">Next</a>
+                        <a href="?page={{ entries.paginator.num_pages }}{% if filters %}&{{ filters|urlencode }}{% endif %}">Last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Target type</th>
+                            <th>Target ID</th>
+                            <th>Action</th>
+                            <th>Original Value</th>
+                            <th>New Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                            <tr>
+                                <td><a>{{entry.id}}</a></td>
+                                <td><a>{{entry.timestamp}}</a></td>
+                                <td><a>{{entry.user}}</a></td>
+                                <td><a>{{entry.target_type}}</a></td>
+                                <td><a>{{entry.target_id}}</a></td>
+                                <td><a>{{entry.action}}</a></td>
+                                <td><a>{{entry.original_value}}</a></td>
+                                <td><a>{{entry.new_value}}</a></td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">{% trans "No entries found matching the criteria." %}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <script>
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', function () {
+                        const row = this.closest('tr');
+                        if (this.checked) {
+                            row.style.backgroundColor = '#dceeff'; // Light blue
+                        } else {
+                            row.style.backgroundColor = ''; // Reset
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+{% endblock %}

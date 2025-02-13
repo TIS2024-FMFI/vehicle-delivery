@@ -1,7 +1,191 @@
 {% extends "base_agent.html" %}
-{% block title %}Departments List{% endblock %}
+{% block title %}Statistics{% endblock %}
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "Statistics" %}</h1>
+<div class="container">
+    <form method="GET" class="date-filter-form">
+        <div>
+        <label for="start_date">{% trans "Start Date" %}</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+        <a></a>
+
+        <label for="end_date">{% trans "End Date" %}</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+        <button type="submit">{% trans "Filter" %}</button>
+        </div>
+    </form>
+
+    <!-- Imported Complaints Table -->
+    <div class="table-container">
+        <h3 class="table-title">{% trans "Imported Complaints" %}</h3>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Count" %}</th>
+                    <th>{% trans "Percentage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in imports_per_month %}
+                    <tr>
+                        <td>{{ entry.target_type }}</td>
+                        <td class="count-column">{{ entry.count }}</td>
+                        <td class="percentage-column">{{ entry.percentage }}%</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="no-data">{% trans "No data available." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    <!-- Status Changes Table -->
+        <h3 class="table-title">{% trans "Status Changes" %}</h3>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "New Status" %}</th>
+                    <th>{% trans "Count" %}</th>
+                    <th>{% trans "Percentage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in status_changes %}
+                    <tr>
+                        <td>{{ entry.target_type }}</td>
+                        <td>{{ entry.new_value }}</td>
+                        <td class="count-column">{{ entry.count }}</td>
+                        <td class="percentage-column">{{ entry.percentage }}%</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="no-data">{% trans "No data available." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container">
+        <h3 class="table-title">{% trans "Nature of Reported Damage" %}</h3>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Code" %}</th>
+                    <th>{% trans "Nature of Damage" %}</th>
+                    <th>{% trans "Count" %}</th>
+                    <th>{% trans "Percentage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in nature_of_damage_counts %}
+                    <tr>
+                        <td>{{ entry.code }}</td>
+                        <td>{{ entry.name }}</td>
+                        <td class="count-column">{{ entry.count }}</td>
+                        <td class="percentage-column">{{ entry.percentage }}%</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="no-data">{% trans "No data available." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 class="table-title">{% trans "Places of Reported Damage" %}</h3>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Code" %}</th>
+                    <th>{% trans "Place of Damage" %}</th>
+                    <th>{% trans "Count" %}</th>
+                    <th>{% trans "Percentage" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in place_of_damage_counts %}
+                    <tr>
+                        <td>{{ entry.code }}</td>
+                        <td>{{ entry.name }}</td>
+                        <td class="count-column">{{ entry.count }}</td>
+                        <td class="percentage-column">{{ entry.percentage }}%</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="3" class="no-data">{% trans "No data available." %}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .stats-title {
+        text-align: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .table-container {
+        margin-bottom: 30px;
+    }
+
+    .table-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .styled-table th, .styled-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .styled-table thead {
+        background-color: #007BFF;
+        color: white;
+    }
+
+    .styled-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .count-column {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .no-data {
+        text-align: center;
+        font-style: italic;
+        color: gray;
+    }
+    .date-filter-form {
+        display: flex;
+        gap: 10px;
+        align-items: left;
+        margin-bottom: 20px;
+        width: 140px;
+    }
+    .date-filter-form input, .date-filter-form button {
+        padding: 8px;
+        font-size: 14px;
+        
+        width: 100px;
+    }
+</style>
 {% endblock %}
