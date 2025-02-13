@@ -581,17 +581,31 @@ def entry_detail(request, id, _type):
 def statistics(request):
     activate(request.session["language"])
 
-    # Count imports by type
+    # Get start_date and end_date from the GET request
+    start_date_str = request.GET.get("start_date", "")
+    end_date_str = request.GET.get("end_date", "")
+
+    # Convert to datetime objects if the dates are provided
+    if start_date_str and end_date_str:
+        start_date = start_date_str
+        end_date = end_date_str
+    else:
+        start_date = now()
+        end_date = now()
+
+    # Count imports by type (filter by date if provided)
     imports_by_type = (
-        ActionLog.objects.filter(action="import")
+        ActionLog.objects.filter(action="complaint_import")
+        .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
         .values("target_type")
         .annotate(count=Count("id"))
         .order_by("target_type")
     )
 
-    # Count status changes
+    # Count status changes (filter by date if provided)
     status_changes = (
         ActionLog.objects.filter(action__startswith="status_update")
+        .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
         .values("target_type", "new_value")
         .annotate(count=Count("id"))
         .order_by("target_type", "new_value")
@@ -600,36 +614,54 @@ def statistics(request):
     NATURE_OF_DAMAGE_DICT = dict(NATURE_OF_DAMAGE)
     PLACE_OF_DAMAGE_DICT = dict(PLACE_OF_DAMAGE)
 
-    # Nature of damage counts
+    # Nature of damage counts (filter by ActionLogs within the date range)
     raw_nature_of_damage_counts = (
-        ClaimModel.objects.exclude(nature_of_damage_1="XX")
+        ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                  .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                  .values("target_id"))
+        .exclude(nature_of_damage_1="XX")
         .values("nature_of_damage_1")
         .annotate(count=Count("nature_of_damage_1"))
         .union(
-            ClaimModel.objects.exclude(nature_of_damage_2="XX")
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(nature_of_damage_2="XX")
             .values("nature_of_damage_2")
             .annotate(count=Count("nature_of_damage_2"))
         )
         .union(
-            ClaimModel.objects.exclude(nature_of_damage_3="XX")
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(nature_of_damage_3="XX")
             .values("nature_of_damage_3")
             .annotate(count=Count("nature_of_damage_3"))
         )
         .order_by("-count")
     )
 
-    # Place of damage counts
+    # Place of damage counts (filter by ActionLogs within the date range)
     raw_place_of_damage_counts = (
-        ClaimModel.objects.exclude(place_of_damage_1="00")
+        ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                  .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                  .values("target_id"))
+        .exclude(place_of_damage_1="00")
         .values("place_of_damage_1")
         .annotate(count=Count("place_of_damage_1"))
         .union(
-            ClaimModel.objects.exclude(place_of_damage_2="00")
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(place_of_damage_2="00")
             .values("place_of_damage_2")
             .annotate(count=Count("place_of_damage_2"))
         )
         .union(
-            ClaimModel.objects.exclude(place_of_damage_3="00")
+            ClaimModel.objects.filter(id__in=ActionLog.objects.filter(action="complaint_import")
+                                      .filter(timestamp__range=[start_date, end_date] if start_date and end_date else [])
+                                      .values("target_id"))
+            .exclude(place_of_damage_3="00")
             .values("place_of_damage_3")
             .annotate(count=Count("place_of_damage_3"))
         )

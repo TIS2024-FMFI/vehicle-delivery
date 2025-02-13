@@ -4,6 +4,17 @@
 
 {% block content %}
 <div class="container">
+    <form method="GET" class="date-filter-form">
+        <div>
+        <label for="start_date">{% trans "Start Date" %}</label>
+        <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+        <a></a>
+
+        <label for="end_date">{% trans "End Date" %}</label>
+        <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+        <button type="submit">{% trans "Filter" %}</button>
+        </div>
+    </form>
 
     <!-- Imported Complaints Table -->
     <div class="table-container">
@@ -162,6 +173,19 @@
         text-align: center;
         font-style: italic;
         color: gray;
+    }
+    .date-filter-form {
+        display: flex;
+        gap: 10px;
+        align-items: left;
+        margin-bottom: 20px;
+        width: 140px;
+    }
+    .date-filter-form input, .date-filter-form button {
+        padding: 8px;
+        font-size: 14px;
+        
+        width: 100px;
     }
 </style>
 {% endblock %}
