@@ -91,6 +91,7 @@ class PersonForm(UserCreationForm):
 
         if commit:
             Person.objects.create(
+                id=user.id,
                 user=user,
                 user_type=self.cleaned_data['user_type'],
                 department=self.cleaned_data['department']

@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.forms.models import model_to_dict
 import json
 from .forms import *
 from .models import *
@@ -16,6 +17,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import ClaimModel, Person
 from .export import export_single_object, download_all_files
+from .logging import get_complaint_type
+
+
 
 
 #Create your views here.
@@ -36,15 +40,51 @@ def home(request):
 @admin_required
 def form_update_department(request, id):
     activate(request.session["language"])
-    department_instance = Department.objects.get(id=id)
+
+    # Fetch existing department
+    department_instance = get_object_or_404(Department, id=id)
+
     if request.method == 'POST':
         if request.POST.get('delete'):
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Department),
+                target_id=id,
+                action="delete",
+                original_value=department_instance.name
+            )
             department_instance.delete()
             return redirect('/departments/')
+        
+        # Track changes before saving
+        old_values = model_to_dict(department_instance)
         form = DepartmentForm(request.POST, instance=department_instance)
+
         if form.is_valid():
+            new_values = form.cleaned_data
             form.save()
+
+            # Log only changed fields
+            excluded_fields = {"id", "created_at"}
+            for field in old_values:
+                if field in excluded_fields:
+                    continue
+                
+                old_value = old_values[field]
+                new_value = new_values.get(field)
+
+                if old_value != new_value:
+                    ActionLog.objects.create(
+                        user=request.user.person,
+                        target_type=get_complaint_type(Department),
+                        target_id=id,
+                        action=f"update_{field}",
+                        original_value=str(old_value) if old_value is not None else "",
+                        new_value=str(new_value) if new_value is not None else ""
+                    )
+
             return redirect('/departments/')
+    
     else:
         form = DepartmentForm(instance=department_instance)
 
@@ -56,8 +96,16 @@ def form_create_department(request):
     activate(request.session["language"])
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
+        
         if form.is_valid():
-            form.save()
+            department_instance = form.save()
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Department),
+                target_id=department_instance.id,
+                action="create",
+                new_value=department_instance.name
+            )
             return redirect('/departments/')
     else:
         form = DepartmentForm()
@@ -67,13 +115,25 @@ def form_create_department(request):
 @admin_required
 def form_create_person(request):
     activate(request.session["language"])
+    
     if request.method == 'POST':
         form = PersonForm(request.POST)
+        
         if form.is_valid():
-            form.save()
+            person_instance = form.save()  # Save and get the new instance
+            
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=person_instance.id,
+                action="create",
+                new_value=person_instance.username
+            )
             return redirect('/users/')
+    
     else:
         form = PersonForm()
+
     return render(request, "registration/create_user.html", {'form': form})
 
 @admin_required
@@ -86,6 +146,14 @@ def form_change_person_passwd(request, id):
         if form.is_valid() and form.cleaned_data['password1'] == form.cleaned_data['password2']:
             user.set_password(form.cleaned_data['password1'])
             user.save()
+
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=id,
+                action="admin_password_change"
+            )
+
             return redirect('/users/')
         else:
             message = "Passwords do not match"
@@ -97,23 +165,61 @@ def form_change_person_passwd(request, id):
 
 @admin_required
 def form_update_person(request, id):
-    if (request.user.id == id):
+    if request.user.id == id:
         return redirect('/users/')
+
     activate(request.session["language"])
-    user = User.objects.get(id=id)
+    user = get_object_or_404(User, id=id)
+    
     if request.method == 'POST':
+        # Handle delete
         if request.POST.get('delete'):
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(Person),
+                target_id=user.person.id,
+                action="delete",
+                original_value=user.username
+            )
             user.delete()
             return redirect('/users/')
+
+        # Handle update
         if request.POST.get('save'):
-            form = UpdatePersonForm(request.POST, instance=user.person)
+            person_instance = user.person
+            old_values = model_to_dict(person_instance)  # Get old values
+            old_values['username'] = person_instance.user.username
+            form = UpdatePersonForm(request.POST, instance=person_instance)
+
             if form.is_valid():
+                new_values = form.cleaned_data  # Get new field values
                 form.save()
+
+                # Log only changed fields
+                excluded_fields = {"id", "created_at", "user"}
+                for field in old_values:
+                    if field in excluded_fields:
+                        continue
+                    
+                    old_value = old_values.get(field)
+                    new_value = new_values.get(field)
+
+                    if old_value != new_value:  # Only log changes
+                        ActionLog.objects.create(
+                            user=request.user.person,
+                            target_type=get_complaint_type(Person),
+                            target_id=person_instance.id,
+                            action=f"update_{field}",
+                            original_value=str(old_value) if old_value is not None else "",
+                            new_value=str(new_value) if new_value is not None else ""
+                        )
+
                 return redirect('/users/')
+    
     else:
         form = UpdatePersonForm(instance=user.person)
-    return render(request, "registration/update_person.html", {'form': form,
-                                                               "user": user,})
+
+    return render(request, "registration/update_person.html", {'form': form, "user": user})
 
 @admin_required
 def users(request):
@@ -145,12 +251,11 @@ def departments(request):
 
     activate(request.session["language"])
     if request.method == 'POST':
-        # if request.POST.get('add'):
-        #     return redirect(f'/form_department/')
-        # elif request.POST.get('department'):
-        department = Department.objects.get(id=request.POST.get('department'))
-
-        return redirect(f'/form_department/{department.id}/')
+        if request.POST.get('add'):
+            return redirect('/form_department/0/')
+        elif request.POST.get('department'):
+            department = Department.objects.get(id=request.POST.get('department'))
+            return redirect(f'/form_department/{department.id}/')
 
     departments = Department.objects.all().order_by('name')
 
@@ -177,19 +282,24 @@ def form_claim(request):
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
-            claim = form.save(commit=False)
-            claim.status = 'new'
-            claim.save()
+            form.status = 'new'
+            complaint = form.save()
 
-            mail_send(claim, 'CL')  # send mail to customer
+            mail_send(complaint, 'CL')  # send mail to customer
 
             departments = Department.objects.filter(reclamationType='CL')
             for department in departments:
                 if department.email:
-                    send_claim_email_to_agent(claim, department.email)
+                    send_claim_email_to_agent(complaint, department.email)
 
-
-            return HttpResponseRedirect('/form_claim/')
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
+            return HttpResponseRedirect('/thanks/')
     else:
         form = ClaimForm()
 
@@ -201,17 +311,23 @@ def form_communication(request):
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
-            communication = form.save(commit=False)
-            communication.status = 'new'
-            communication.save()
+            form.status = 'new'
+            complaint = form.save()
 
-            mail_send(communication, 'CM')  # send mail to customer
+            mail_send(complaint, 'CM')  # send mail to customer
 
             departments = Department.objects.filter(reclamationType='CM')
             for department in departments:
                 if department.email:
-                    send_claim_email_to_agent(communication, department.email)
+                    send_claim_email_to_agent(complaint, department.email)
 
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = CommunicationForm()
@@ -224,17 +340,23 @@ def form_other(request):
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
-            other = form.save(commit=False)
-            other.status = 'new'
-            other.save()
+            form.status = 'new'
+            complaint = form.save()
 
-            mail_send(other, 'OT')  # send mail to customer
+            mail_send(complaint, 'OT')  # send mail to customer
 
             departments = Department.objects.filter(reclamationType='OT')
             for department in departments:
                 if department.email:
-                    send_claim_email_to_agent(other, department.email)
+                    send_claim_email_to_agent(complaint, department.email)
 
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = OtherForm()
@@ -247,17 +369,23 @@ def form_transport(request):
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
-            transport = form.save(commit=False)
-            transport.status = 'new'
-            transport.save()
+            form.status = 'new'
+            complaint = form.save()
 
-            mail_send(transport, 'TR')  # send mail to customer
+            mail_send(complaint, 'TR')  # send mail to customer
 
             departments = Department.objects.filter(reclamationType='TR')
             for department in departments:
                 if department.email:
-                    send_claim_email_to_agent(transport, department.email)
+                    send_claim_email_to_agent(complaint, department.email)
 
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = TransportForm()
@@ -270,17 +398,23 @@ def form_preparation(request):
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
-            prepair = form.save(commit=False)
-            prepair.status = 'new'
-            prepair.save()
+            form.status = 'new'
+            complaint = form.save()
 
-            mail_send(prepair, 'VP')  # send mail to customer
+            mail_send(complaint, 'VP')  # send mail to customer
 
             departments = Department.objects.filter(reclamationType='VP')
             for department in departments:
                 if department.email:
-                    send_claim_email_to_agent(prepair, department.email)
+                    send_claim_email_to_agent(complaint, department.email)
 
+            ActionLog.objects.create(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.__class__),
+                target_id=complaint.id,
+                action=f"complaint_import",
+                new_value=complaint.firm_name
+            )
             return HttpResponseRedirect('/thanks/')
     else:
         form = PreparationForm()
@@ -377,7 +511,6 @@ def agent_dashboard(request):
 
 @login_required
 def update_status(request):
-    print("Som tu----------------------------------------------------")
     if request.method == "POST":
         # Parse the received data
         new_status = request.POST.get('new_status')
@@ -393,15 +526,26 @@ def update_status(request):
         if selected_entries and new_status:
             match request.user.person.department.reclamationType:
                 case 'CL':
-                    ClaimModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = ClaimModel.objects.filter(id__in=selected_entries)
                 case 'CM':
-                    CommunicationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = CommunicationModel.objects.filter(id__in=selected_entries)
                 case 'TR':
-                    TransportModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = TransportModel.objects.filter(id__in=selected_entries)
                 case 'VP':
-                    PreparationModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = PreparationModel.objects.filter(id__in=selected_entries)
                 case 'OT':
-                    OtherModel.objects.filter(id__in=selected_entries).update(status=new_status)
+                    complaint = OtherModel.objects.filter(id__in=selected_entries)
+
+            
+            ActionLog(
+                user=request.user.person,
+                target_type=get_complaint_type(complaint.get().__class__),
+                target_id=complaint.get().id,
+                action="status_update",
+                original_value=complaint.get().status,
+                new_value=new_status
+            ).save()
+            complaint.update(status=new_status)
 
             return JsonResponse({'status': 'success', 'message': 'Status updated successfully'})
 

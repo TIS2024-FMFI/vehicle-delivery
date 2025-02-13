@@ -6,6 +6,10 @@ from django.db.models import FileField, ImageField, DateField
 from main.models import *
 import zipfile
 import os
+from main.logging import get_complaint_type
+#from VehicleDelivery.settings import LOGGING
+
+#logger = LOGGING.getLogger("logger")
 
 
 def export_single_object(request, obj_id, model):
@@ -61,6 +65,15 @@ def export_single_object(request, obj_id, model):
     response["Content-Disposition"] = f'attachment; filename="complaint_{obj_id}.xlsx"'
 
     workbook.save(response)
+
+    ActionLog(
+        user=request.user.person,
+        target_type=get_complaint_type(model),
+        target_id=obj_id,
+        action="export",
+    ).save()
+    
+
     return response
 
 
@@ -90,5 +103,12 @@ def download_all_files(request, obj_id, model):
             file_path = file.path 
             if os.path.exists(file_path):
                 zip_file.write(file_path, f"{obj_id}_{os.path.basename(file_path)}")
+
+    ActionLog(
+        user=request.user.person,
+        target_type=get_complaint_type(model),
+        target_id=obj_id,
+        action="download files",
+    ).save()
 
     return response
