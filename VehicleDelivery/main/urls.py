@@ -22,5 +22,6 @@ urlpatterns = [
     path("entry_detail/<int:id>/<str:_type>", views.entry_detail, name="entry_detail"),
     path('update_status/', views.update_status, name='update_status'),
     path('switch-language/<str:language_code>/', views.switch_language, name='switch_language'),
-    path("statistics", views.statistics, name="statistics")
+    path("statistics", views.statistics, name="statistics"),
+    path("logs", views.logs, name="logs")
 ]

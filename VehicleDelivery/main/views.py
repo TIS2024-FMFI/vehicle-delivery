@@ -14,6 +14,7 @@ from functools import wraps
 from django.contrib.auth.forms import PasswordChangeForm
 from .decorators import admin_required, login_required
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 from django.conf import settings
 from .models import ClaimModel, Person
 from .export import export_single_object, download_all_files
@@ -680,3 +681,65 @@ def no_access(request):
 def thanks(request):
     return render(request, "thank.html")
 
+def logs(request):
+    activate(request.session["language"])
+    input_date_from = request.GET.get('date_from', '')
+    input_date_to = request.GET.get('date_to', '')
+    input_id = request.GET.get('id', '')
+    input_user = request.GET.get('user', '')
+    input_target_type = request.GET.get('target_type', '')
+    input_target_id = request.GET.get('target_id', '')
+    input_action = request.GET.get('action', '')
+
+
+
+    filters = {
+        'date_from': request.GET.get('date_from', ''),
+        'date_to': request.GET.get('date_to', ''),
+        'id': request.GET.get('id', ''),
+        'user': request.GET.get('user', ''),
+        'target_type': request.GET.get('target_type', ''),
+        'target_id': request.GET.get('target_id', ''),
+        'action': request.GET.get('action', '')
+    }
+
+    # context = {
+    #     'report_types': REPORT_TYPES,
+    #     'filters' : filters
+
+    # }
+    entries = ActionLog.objects.all().order_by('-id')
+
+    if input_date_from:
+        entries = entries.filter(timestamp__gte=input_date_from)
+    if input_date_to:
+        entries = entries.filter(timestamp__lte=input_date_to)
+    if input_id:
+        entries = entries.filter(id__icontains=input_id)
+    if input_user:
+        user_ids = User.objects.filter(
+            Q(username__icontains=input_user) | 
+            Q(first_name__icontains=input_user) | 
+            Q(last_name__icontains=input_user)
+        ).values_list('id', flat=True)  # Get matching user IDs
+
+        entries = entries.filter(user_id__in=user_ids) 
+    if input_target_type:
+        entries = entries.filter(target_type__icontains=input_target_type)
+    if input_target_id:
+        entries = entries.filter(target_id__icontains=input_target_id)
+    if input_action:
+        entries = entries.filter(action__icontains=input_action)
+
+    paginator = Paginator(entries, 100)  # Show 50 entries per page
+    page_number = request.GET.get('page', 1)  # Get current page, default to 1
+    page_obj = paginator.get_page(page_number)  # Get the page object
+
+    context = {
+        'report_types': REPORT_TYPES,
+        'filters' : filters,
+        'entries' : page_obj
+    }
+    #context['entries'] = entries
+
+    return render(request, "logs.html", context)
