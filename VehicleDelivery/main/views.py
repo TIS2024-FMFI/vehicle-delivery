@@ -26,8 +26,13 @@ from .logging import get_complaint_type
 
 #Create your views here.
 
-def no_access(request):
+def set_language(request):
+    if "language" not in request.session:
+        request.session["language"] = 'en'
     activate(request.session["language"])
+
+def no_access(request):
+    set_language(request)
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
 def hello_world(request):
@@ -36,12 +41,12 @@ def hello_world(request):
 def home(request):
     if "language" not in request.session:
         request.session["language"] = 'en'
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "home.html")
 
 @admin_required
 def form_update_department(request, id):
-    activate(request.session["language"])
+    set_language(request)
 
     # Fetch existing department
     department_instance = get_object_or_404(Department, id=id)
@@ -95,7 +100,7 @@ def form_update_department(request, id):
 
 @admin_required
 def form_create_department(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
         
@@ -116,7 +121,7 @@ def form_create_department(request):
 
 @admin_required
 def form_create_person(request):
-    activate(request.session["language"])
+    set_language(request)
     
     if request.method == 'POST':
         form = PersonForm(request.POST)
@@ -140,7 +145,7 @@ def form_create_person(request):
 
 @admin_required
 def form_change_person_passwd(request, id):
-    activate(request.session["language"])
+    set_language(request)
     user = User.objects.get(id=id)
     message = None
     if request.method == 'POST':
@@ -170,7 +175,7 @@ def form_update_person(request, id):
     if request.user.id == id:
         return redirect('/users/')
 
-    activate(request.session["language"])
+    set_language(request)
     user = get_object_or_404(User, id=id)
     
     if request.method == 'POST':
@@ -227,7 +232,7 @@ def form_update_person(request, id):
 def users(request):
     search_query = request.GET.get('search', '')
 
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         if request.POST.get('passwd'):
             return redirect(f"/change_passwd/{request.POST.get('passwd')}/")
@@ -251,7 +256,7 @@ def users(request):
 def departments(request):
     search_query = request.GET.get('search', '')
 
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         if request.POST.get('add'):
             return redirect('/form_department/0/')
@@ -275,12 +280,12 @@ def switch_language(request, language_code):
 
 
 def form_all(request):
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "forms.html")
 
 
 def form_claim(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = ClaimForm(request.POST, request.FILES)
         if form.is_valid():
@@ -308,7 +313,7 @@ def form_claim(request):
 
 
 def form_communication(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = CommunicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -336,7 +341,7 @@ def form_communication(request):
 
 
 def form_other(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = OtherForm(request.POST, request.FILES)
         if form.is_valid():
@@ -364,7 +369,7 @@ def form_other(request):
 
 
 def form_transport(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = TransportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -392,7 +397,7 @@ def form_transport(request):
 
 
 def form_preparation(request):
-    activate(request.session["language"])
+    set_language(request)
     if request.method == 'POST':
         form = PreparationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -420,14 +425,14 @@ def form_preparation(request):
 
 
 def thanks(request):
-    activate(request.session["language"])
+    set_language(request)
     return render(request, "thank.html")
 
 #(shows ClaimModel entries)----------------------------------------------------------------------
 
 @login_required
 def agent_dashboard(request):
-    activate(request.session["language"])
+    set_language(request)
     input_status = request.GET.get('status', 'new')
     input_date_from = request.GET.get('date_from', '')
     input_date_to = request.GET.get('date_to', '')
@@ -553,7 +558,7 @@ def update_status(request):
 #(shows ClaimModel details)-----------------------------------------------------------------------
 @login_required
 def entry_detail(request, id, _type):
-    activate(request.session["language"])
+    set_language(request)
 
     entry = None
 
@@ -579,7 +584,7 @@ def entry_detail(request, id, _type):
 
 @login_required
 def statistics(request):
-    activate(request.session["language"])
+    set_language(request)
 
     # Get start_date and end_date from the GET request
     start_date_str = request.GET.get("start_date", "")
@@ -841,7 +846,7 @@ def no_access(request):
 
 
 def logs(request):
-    activate(request.session["language"])
+    set_language(request)
     input_date_from = request.GET.get('date_from', '')
     input_date_to = request.GET.get('date_to', '')
     input_id = request.GET.get('id', '')
