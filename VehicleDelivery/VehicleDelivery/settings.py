@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from dotenv import load_dotenv, dotenv_values
 from pathlib import Path
 import os
 
@@ -152,8 +153,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # For testing
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'futurecompanymail@gmail.com'  # tested email
-EMAIL_HOST_PASSWORD = 'emwc wesw umbj vaym'  # SEVA_test generated password
+
+load_dotenv()
+EMAIL_HOST_USER = os.getenv("EMAIL")
+EMAIL_HOST_PASSWORD = os.getenv("PASSWORD")
 
 # Login and Logout URLs
 LOGOUT_REDIRECT_URL = '/'
