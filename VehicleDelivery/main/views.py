@@ -628,6 +628,20 @@ def mail_send(claim, complaint_type):
 
     subject = "Complaint Submitted Successfully"
     message = f"""
+    Milý {complaint.first_name} {complaint.second_name},
+
+    Ďakujeme za podanie reklamacie. Tu sú podrobnosti o vašom podaní:
+
+    - Dátum podania: {complaint.date}
+    - Správa: {complaint.message}
+
+    Náš tím vašu reklamáciu preskúma a čoskoro vás kontaktuje.
+
+    S pozdravom,
+    CEVA Logistic
+    
+    -------------------------------------------
+
     Dear {complaint.first_name} {complaint.second_name},
 
     Thank you for submitting your complaint with us. Here are the details of your submission:
@@ -656,12 +670,22 @@ def mail_send(claim, complaint_type):
 def send_claim_email_to_agent(complaint, agent_email):
     subject = "New Claim Submission"
     message = f"""
-    A new complaint has been submitted with the following details:
+    Nová reklamácia bola podaná s nasledujúcimi podrobnosťami:
 
+    - ID reklamácie: {complaint.id}
+    - Dátum podania: {complaint.date}
+    - Správa: {complaint.message}
+
+    Prosím, skontrolujte reklamáciu a podniknite príslušné kroky.
+
+    -------------------------------------------
+
+    A new complaint has been submitted with the following details:
+    
     - Complaint id: {complaint.id}
     - Submission Date: {complaint.date}
     - Message: {complaint.message}
-
+    
     Please review the claim and take appropriate action.
     """
 
