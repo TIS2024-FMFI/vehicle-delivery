@@ -143,7 +143,7 @@
                             url: '{% url "update_status" %}', // Update with the correct URL
                             type: 'POST',
                             data: {
-                                //'type' :  document.getElementById("typeReport").value,
+                                'type' :  document.getElementById("typeReport").value,
                                 'new_status': selectedStatus,
                                 'selected_entries': JSON.stringify(selectedEntries), // Serialize the array as JSON
                                 'csrfmiddlewaretoken': '{{ csrf_token }}' // Include CSRF token

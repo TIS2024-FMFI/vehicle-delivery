@@ -62,7 +62,7 @@ def form_update_department(request, id):
             )
             department_instance.delete()
             return redirect('/departments/')
-        
+
         # Track changes before saving
         old_values = model_to_dict(department_instance)
         form = DepartmentForm(request.POST, instance=department_instance)
@@ -76,7 +76,7 @@ def form_update_department(request, id):
             for field in old_values:
                 if field in excluded_fields:
                     continue
-                
+
                 old_value = old_values[field]
                 new_value = new_values.get(field)
 
@@ -91,7 +91,7 @@ def form_update_department(request, id):
                     )
 
             return redirect('/departments/')
-    
+
     else:
         form = DepartmentForm(instance=department_instance)
 
@@ -103,7 +103,7 @@ def form_create_department(request):
     set_language(request)
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
-        
+
         if form.is_valid():
             department_instance = form.save()
             ActionLog.objects.create(
@@ -122,13 +122,13 @@ def form_create_department(request):
 @admin_required
 def form_create_person(request):
     set_language(request)
-    
+
     if request.method == 'POST':
         form = PersonForm(request.POST)
-        
+
         if form.is_valid():
             person_instance = form.save()  # Save and get the new instance
-            
+
             ActionLog.objects.create(
                 user=request.user.person,
                 target_type=get_complaint_type(Person),
@@ -137,7 +137,7 @@ def form_create_person(request):
                 new_value=person_instance.username
             )
             return redirect('/users/')
-    
+
     else:
         form = PersonForm()
 
@@ -177,7 +177,7 @@ def form_update_person(request, id):
 
     set_language(request)
     user = get_object_or_404(User, id=id)
-    
+
     if request.method == 'POST':
         # Handle delete
         if request.POST.get('delete'):
@@ -207,7 +207,7 @@ def form_update_person(request, id):
                 for field in old_values:
                     if field in excluded_fields:
                         continue
-                    
+
                     old_value = old_values.get(field)
                     new_value = new_values.get(field)
 
@@ -222,7 +222,7 @@ def form_update_person(request, id):
                         )
 
                 return redirect('/users/')
-    
+
     else:
         form = UpdatePersonForm(instance=user.person)
 
@@ -517,6 +517,7 @@ def update_status(request):
         # Parse the received data
         new_status = request.POST.get('new_status')
         selected_entries_json = request.POST.get('selected_entries')
+        _type = request.POST.get("type")
 
         try:
             # Decode the JSON string back into a Python list
@@ -525,29 +526,29 @@ def update_status(request):
             return JsonResponse({'status': 'error', 'message': 'Invalid data'}, status=400)
 
         # Perform the status update
-        if selected_entries and new_status:
+        if selected_entries and new_status and _type == request.user.person.department.reclamationType:
             match request.user.person.department.reclamationType:
                 case 'CL':
-                    complaint = ClaimModel.objects.filter(id__in=selected_entries)
+                    complaints = ClaimModel.objects.filter(id__in=selected_entries)
                 case 'CM':
-                    complaint = CommunicationModel.objects.filter(id__in=selected_entries)
+                    complaints = CommunicationModel.objects.filter(id__in=selected_entries)
                 case 'TR':
-                    complaint = TransportModel.objects.filter(id__in=selected_entries)
+                    complaints = TransportModel.objects.filter(id__in=selected_entries)
                 case 'VP':
-                    complaint = PreparationModel.objects.filter(id__in=selected_entries)
+                    complaints = PreparationModel.objects.filter(id__in=selected_entries)
                 case 'OT':
-                    complaint = OtherModel.objects.filter(id__in=selected_entries)
+                    complaints = OtherModel.objects.filter(id__in=selected_entries)
 
-            
-            ActionLog(
-                user=request.user.person,
-                target_type=get_complaint_type(complaint.get().__class__),
-                target_id=complaint.get().id,
-                action="status_update",
-                original_value=complaint.get().status,
-                new_value=new_status
-            ).save()
-            complaint.update(status=new_status)
+            for complaint in complaints:
+                ActionLog(
+                    user=request.user.person,
+                    target_type = get_complaint_type(complaint.__class__),
+                    target_id=complaint.id,
+                    action="status_update",
+                    original_value=complaint.status,
+                    new_value=new_status
+                ).save()
+            complaints.update(status=new_status)
 
             return JsonResponse({'status': 'success', 'message': 'Status updated successfully'})
 
@@ -782,7 +783,7 @@ def mail_send(claim, complaint_type):
 
     S pozdravom,
     CEVA Logistic
-    
+
     -------------------------------------------
 
     Dear {complaint.first_name} {complaint.second_name},
@@ -824,11 +825,11 @@ def send_claim_email_to_agent(complaint, agent_email):
     -------------------------------------------
 
     A new complaint has been submitted with the following details:
-    
+
     - Complaint id: {complaint.id}
     - Submission Date: {complaint.date}
     - Message: {complaint.message}
-    
+
     Please review the claim and take appropriate action.
     """
 
@@ -876,12 +877,12 @@ def logs(request):
         entries = entries.filter(id__icontains=input_id)
     if input_user:
         user_ids = User.objects.filter(
-            Q(username__icontains=input_user) | 
-            Q(first_name__icontains=input_user) | 
+            Q(username__icontains=input_user) |
+            Q(first_name__icontains=input_user) |
             Q(last_name__icontains=input_user)
         ).values_list('id', flat=True)  # Get matching user IDs
 
-        entries = entries.filter(user_id__in=user_ids) 
+        entries = entries.filter(user_id__in=user_ids)
     if input_target_type:
         entries = entries.filter(target_type__icontains=input_target_type)
     if input_target_id:
