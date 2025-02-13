@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, Count
+from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
@@ -294,7 +295,6 @@ def form_claim(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -323,7 +323,6 @@ def form_communication(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -352,7 +351,6 @@ def form_other(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -381,7 +379,6 @@ def form_transport(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -410,7 +407,6 @@ def form_preparation(request):
                     send_claim_email_to_agent(complaint, department.email)
 
             ActionLog.objects.create(
-                user=request.user.person,
                 target_type=get_complaint_type(complaint.__class__),
                 target_id=complaint.id,
                 action=f"complaint_import",
@@ -584,7 +580,116 @@ def entry_detail(request, id, _type):
 @login_required
 def statistics(request):
     activate(request.session["language"])
-    return render(request, "statistics.html")
+
+    # Count imports by type
+    imports_by_type = (
+        ActionLog.objects.filter(action="import")
+        .values("target_type")
+        .annotate(count=Count("id"))
+        .order_by("target_type")
+    )
+
+    # Count status changes
+    status_changes = (
+        ActionLog.objects.filter(action__startswith="status_update")
+        .values("target_type", "new_value")
+        .annotate(count=Count("id"))
+        .order_by("target_type", "new_value")
+    )
+
+    NATURE_OF_DAMAGE_DICT = dict(NATURE_OF_DAMAGE)
+    PLACE_OF_DAMAGE_DICT = dict(PLACE_OF_DAMAGE)
+
+    # Nature of damage counts
+    raw_nature_of_damage_counts = (
+        ClaimModel.objects.exclude(nature_of_damage_1="XX")
+        .values("nature_of_damage_1")
+        .annotate(count=Count("nature_of_damage_1"))
+        .union(
+            ClaimModel.objects.exclude(nature_of_damage_2="XX")
+            .values("nature_of_damage_2")
+            .annotate(count=Count("nature_of_damage_2"))
+        )
+        .union(
+            ClaimModel.objects.exclude(nature_of_damage_3="XX")
+            .values("nature_of_damage_3")
+            .annotate(count=Count("nature_of_damage_3"))
+        )
+        .order_by("-count")
+    )
+
+    # Place of damage counts
+    raw_place_of_damage_counts = (
+        ClaimModel.objects.exclude(place_of_damage_1="00")
+        .values("place_of_damage_1")
+        .annotate(count=Count("place_of_damage_1"))
+        .union(
+            ClaimModel.objects.exclude(place_of_damage_2="00")
+            .values("place_of_damage_2")
+            .annotate(count=Count("place_of_damage_2"))
+        )
+        .union(
+            ClaimModel.objects.exclude(place_of_damage_3="00")
+            .values("place_of_damage_3")
+            .annotate(count=Count("place_of_damage_3"))
+        )
+        .order_by("-count")
+    )
+
+    # Total counts for percentages
+    total_nature_count = sum(entry["count"] for entry in raw_nature_of_damage_counts)
+    total_place_count = sum(entry["count"] for entry in raw_place_of_damage_counts)
+    total_imports = sum(entry["count"] for entry in imports_by_type)
+    total_status_changes = sum(entry["count"] for entry in status_changes)
+
+    # Convert damage codes to readable names and add percentages
+    nature_of_damage_counts = [
+        {
+            "code": entry["nature_of_damage_1"] or entry["nature_of_damage_2"] or entry["nature_of_damage_3"],
+            "name": NATURE_OF_DAMAGE_DICT.get(entry["nature_of_damage_1"] or entry["nature_of_damage_2"] or entry["nature_of_damage_3"], "Unknown"),
+            "count": entry["count"],
+            "percentage": round((entry["count"] / total_nature_count) * 100, 2) if total_nature_count else 0,
+        }
+        for entry in raw_nature_of_damage_counts
+    ]
+
+    place_of_damage_counts = [
+        {
+            "code": entry["place_of_damage_1"] or entry["place_of_damage_2"] or entry["place_of_damage_3"],
+            "name": PLACE_OF_DAMAGE_DICT.get(entry["place_of_damage_1"] or entry["place_of_damage_2"] or entry["place_of_damage_3"], "Unknown"),
+            "count": entry["count"],
+            "percentage": round((entry["count"] / total_place_count) * 100, 2) if total_place_count else 0,
+        }
+        for entry in raw_place_of_damage_counts
+    ]
+
+    # Add percentage to imports and status changes
+    imports_by_type = [
+        {
+            **entry,
+            "percentage": round((entry["count"] / total_imports) * 100, 2) if total_imports else 0,
+        }
+        for entry in imports_by_type
+    ]
+
+    status_changes = [
+        {
+            **entry,
+            "percentage": round((entry["count"] / total_status_changes) * 100, 2) if total_status_changes else 0,
+        }
+        for entry in status_changes
+    ]
+
+    context = {
+        "imports_per_month": imports_by_type,
+        "status_changes": status_changes,
+        "nature_of_damage_counts": nature_of_damage_counts,
+        "place_of_damage_counts": place_of_damage_counts,
+    }
+
+    return render(request, "statistics.html", context)
+
+
 
 def form_claim_next(request):
     if request.methid == 'POST':
@@ -678,8 +783,6 @@ def send_claim_email_to_agent(complaint, agent_email):
 def no_access(request):
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
-def thanks(request):
-    return render(request, "thank.html")
 
 def logs(request):
     activate(request.session["language"])
@@ -702,12 +805,6 @@ def logs(request):
         'target_id': request.GET.get('target_id', ''),
         'action': request.GET.get('action', '')
     }
-
-    # context = {
-    #     'report_types': REPORT_TYPES,
-    #     'filters' : filters
-
-    # }
     entries = ActionLog.objects.all().order_by('-id')
 
     if input_date_from:
@@ -740,6 +837,5 @@ def logs(request):
         'filters' : filters,
         'entries' : page_obj
     }
-    #context['entries'] = entries
 
     return render(request, "logs.html", context)
