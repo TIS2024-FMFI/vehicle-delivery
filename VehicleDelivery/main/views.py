@@ -6,6 +6,7 @@ from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
+from datetime import timedelta
 import json
 from .forms import *
 from .models import *
@@ -18,7 +19,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from django.conf import settings
 from .models import ClaimModel, Person
-from .export import export_single_object, download_all_files
+from .export import export_single_object, download_all_files, export_statistics
 from .logging import get_complaint_type
 
 
@@ -588,16 +589,9 @@ def statistics(request):
     set_language(request)
 
     # Get start_date and end_date from the GET request
-    start_date_str = request.GET.get("start_date", "")
-    end_date_str = request.GET.get("end_date", "")
+    start_date = request.GET.get("start_date", now().date() - timedelta(days=30))
+    end_date = request.GET.get("end_date", now().date())
 
-    # Convert to datetime objects if the dates are provided
-    if start_date_str and end_date_str:
-        start_date = start_date_str
-        end_date = end_date_str
-    else:
-        start_date = now()
-        end_date = now()
 
     # Count imports by type (filter by date if provided)
     imports_by_type = (
@@ -719,11 +713,16 @@ def statistics(request):
     ]
 
     context = {
+        "start_date": start_date,
+        "end_date": end_date,
         "imports_per_month": imports_by_type,
         "status_changes": status_changes,
         "nature_of_damage_counts": nature_of_damage_counts,
         "place_of_damage_counts": place_of_damage_counts,
     }
+
+    if request.method == "POST" and "export" in request.POST:
+        return export_statistics(request, context)
 
     return render(request, "statistics.html", context)
 

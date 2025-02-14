@@ -4,17 +4,25 @@
 
 {% block content %}
 <div class="container">
-    <form method="GET" class="date-filter-form">
-        <div>
-        <label for="start_date">{% trans "Start Date" %}</label>
-        <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
-        <a></a>
-
-        <label for="end_date">{% trans "End Date" %}</label>
-        <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
-        <button type="submit">{% trans "Filter" %}</button>
+    
+        <div class="filter-container">
+            <form method="GET">
+            <label for="start_date">{% trans "Start Date" %}</label>
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+    
+            <label for="end_date">{% trans "End Date" %}</label>
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+    
+            <button type="submit" name="filter" class="filter-button">{% trans "Filter" %}</button>
+            </form>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" name="export" class="export-button">{% trans "Export" %}</button>
+            </form>
         </div>
-    </form>
+    
+    
+    
 
     <!-- Imported Complaints Table -->
     <div class="table-container">
@@ -121,7 +129,7 @@
 <!-- Custom Styling -->
 <style>
     .container {
-        max-width: 900px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
     }
@@ -187,5 +195,35 @@
         
         width: 100px;
     }
+    .export-form {
+        margin-bottom: 20px;
+        text-align: right;
+    }
+    .filter-container {
+        max-width: 120px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .filter-button {
+        background-color: #285fa7;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .export-button {
+        background-color: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 120px;
+    }
+    .export-button:hover {
+        background-color: #218838;
+    }
+    
 </style>
 {% endblock %}
