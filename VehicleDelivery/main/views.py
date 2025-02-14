@@ -845,7 +845,7 @@ def send_claim_email_to_agent(complaint, agent_email):
 def no_access(request):
     return render(request, 'no_access.html', {"message": "You do not have permission to access this page."})
 
-
+@admin_required
 def logs(request):
     set_language(request)
     input_date_from = request.GET.get('date_from', '')
