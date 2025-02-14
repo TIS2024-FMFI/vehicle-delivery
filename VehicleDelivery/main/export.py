@@ -1,15 +1,15 @@
 import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.utils import get_column_letter
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.db.models import FileField, ImageField, DateField
+from django.db.models import FileField, ImageField, DateField, Count
+from django.utils.timezone import now
+from datetime import timedelta
 from main.models import *
 import zipfile
 import os
 from main.logging import get_complaint_type
-#from VehicleDelivery.settings import LOGGING
-
-#logger = LOGGING.getLogger("logger")
 
 
 def export_single_object(request, obj_id, model):
@@ -111,4 +111,66 @@ def download_all_files(request, obj_id, model):
         action="download files",
     ).save()
 
+    return response
+
+
+def export_statistics(request, context):
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+    sheet.title = "Statistics"
+
+    # A function to write table data to an Excel sheet with formatted headers and auto-adjusted column widths.
+    def add_table(sheet, row, title, columns, data):
+        
+        sheet.cell(row=row, column=1, value=title)  # Title row
+        row += 1  # Move to the header row
+
+        # Apply header styles
+        header_fill = PatternFill(start_color="B3D9FF", end_color="B3D9FF", fill_type="solid")  # Light Blue
+        header_font = Font(bold=True)
+
+        #sheet.append(columns)  # Column headers
+        for col_num, col_name in enumerate(columns, 1):  # 1-based index
+            cell = sheet.cell(row=row, column=col_num, value=col_name)
+            cell.fill = header_fill
+            cell.font = header_font
+
+        row += 1  # Move to data row
+
+        # Write table data
+        for entry in data:
+            row_values = [str(entry.get(col_name, "")) for col_name in columns]  # Get values safely
+            sheet.append(row_values)
+
+        # Adjust column widths based on content
+        for col_num, col_name in enumerate(columns, 1):
+            column_letter = get_column_letter(col_num)
+            max_length = max(len(str(entry.get(col_name, ""))) for entry in data) if data else len(col_name)
+            adjusted_width = max_length + 4  # Add padding
+            sheet.column_dimensions[column_letter].width = max(adjusted_width, 13)
+
+        return row + len(data) + 2  # Return updated row position
+
+    
+    sheet.append(["start date", "end date"])
+    sheet.append([context["start_date"], context["end_date"]])
+    row = 5
+    # Imports per Month Table
+    row = add_table(sheet, row, "Complaints Imported", ["target_type", "count", "percentage"], context["imports_per_month"])
+
+    # Status Changes Table
+    row = add_table(sheet, row, "Status Changes", ["target_type", "new_value", "count", "percentage"], context["status_changes"])
+
+    # Nature of Damage Table
+    row = add_table(sheet, row, "Nature of Damage", ["code", "name", "count", "percentage"], context["nature_of_damage_counts"])
+
+    # Place of Damage Table
+    row = add_table(sheet, row, "Place of Damage", ["code", "name", "count", "percentage"], context["place_of_damage_counts"])
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="statistics_{context["start_date"]}_{context["end_date"]}.xlsx"'
+
+    workbook.save(response)
     return response
