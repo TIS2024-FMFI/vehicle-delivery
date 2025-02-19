@@ -1,3 +1,6 @@
+## Vehicke delivery
+This project is created for vehicle delivery complaints and feedback. 
+
 ## Running the project
 Project can be run failry easily with the use of docker compose. You can get docker with all the components [here](https://docs.docker.com/get-docker/).
 1. Clone the repository
@@ -5,14 +8,13 @@ Project can be run failry easily with the use of docker compose. You can get doc
    so that it will look like:
    ```
     EMAIL = "your_email"
-    PASSWORD = "your_emails_password
+    PASSWORD = "your_emails_password"
    ```
    If this file is not present create it in vehicle-delivery/VehicleDelivery/VehicleDelivery (at same folder where is settings.py).
    This email is for sending confirmation mails to customers and users.
 4. Fill the `admin.env` file like look like:
    ```
    Admin_username=your_username
-   Admin_mail=your_email
    Admin_password=your_password
    ```
    If this file is not present create it in vehicle-delivery/VehicleDelivery/Main
