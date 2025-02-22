@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path='main/admin.env')
 
 username = os.getenv('Admin_username')
-mail = os.getenv('Admin_mail')
 passwd = os.getenv('Admin_password')
 
 class MainConfig(AppConfig):
@@ -28,7 +27,7 @@ def create_admin_user(sender, **kwargs):
         User = get_user_model()
 
         if not Person.objects.filter(user_type='ADMIN').exists():
-            user = User.objects.create_user(username=username, email=mail, password=passwd)
+            user = User.objects.create_user(username=username, password=passwd)
 
             person, created = Person.objects.get_or_create(user=user)
 
